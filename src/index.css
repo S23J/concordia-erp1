@@ -11,3 +11,118 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Poppins Font Setup */
+@font-face {
+  font-family: 'Poppins-ExtraLight';
+  font-weight: 300;
+  src: local('Poppins-ExtraLight'), url(./assets/fonts/Poppins-ExtraLight.otf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-Light';
+  font-weight: 300;
+  src: local('Poppins-Light'), url(./assets/fonts/Poppins-Light.otf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-Regular';
+  font-weight: 400;
+  src: local('Poppins-Regular'), url(./assets/fonts/Poppins-Regular.otf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-Medium';
+  font-weight: 500;
+  src: local('Poppins-Medium'), url(./assets/fonts/Poppins-Medium.otf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-SemiBold';
+  font-weight: 600;
+  src: local('Poppins-SemiBold'), url(./assets/fonts/Poppins-SemiBold.otf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-Bold';
+  font-weight: 700;
+  src: local('Poppins-Bold'), url(./assets/fonts/Poppins-Bold.otf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-ExtraBold';
+  font-weight: 800;
+  src: local('Poppins-ExtraBold'), url(./assets/fonts/Poppins-ExtraBold.otf) format('truetype');
+}
+
+/* Poppins Font Setup */
+
+#containerFluid {
+  background-image: url('./assets/images/backgroundColor.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+}
+
+
+#cardLogin {
+  background-color: #FFFFFF;
+  min-height: 60%;
+  min-width: 60%;
+  border-radius: 10px;
+  color: #222;
+  border: none;
+}
+
+
+#actionButtonLogin {
+  background-color: #FFFFFF;
+  border-color: #01155C;
+  color: #01155C;
+  min-width: 90px;
+  min-height: 40px;
+  border-width: 2px;
+  border-radius: 8px;
+  font-family: 'Poppins-SemiBold';
+  transition: background-color 0.3s, color 0.3s;
+  /* Add smooth transition */
+
+  /* Hover styles */
+  &:hover {
+    background-color: #01155C;
+    color: #FFFFFF;
+  }
+}
+
+
+.swal2-title {
+  font-family: 'Poppins-Medium' !important;
+}
+
+.swal2-html-container {
+  font-family: 'Poppins-Light' !important;
+}
+
+.swal2-confirm {
+  font-family: 'Poppins-Regular' !important;
+  background-color: #01155C !important;
+  box-shadow: none !important;
+}
+
+.swal2-cancel {
+  font-family: 'Poppins-Regular' !important;
+  box-shadow: none !important;
+}
+
+
+
+/* Media query for smaller screens */
+@media only screen and (max-width: 768px) {
+  #cardLogin {
+    min-height: 80%;
+    min-width: 80%;
+    /* Adjust background size for smaller screens */
+  }
+
+}
