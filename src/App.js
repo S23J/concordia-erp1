@@ -9,6 +9,7 @@ import SalesHomePage from "./pages/Sales/Home";
 import SalesManagerHomePage from "./pages/SalesManager/Home";
 import Funnels from "./pages/Sales/Funnels";
 import OrderRequest from "./pages/Sales/OrderRequest";
+import AddNewFunnels from "./pages/Sales/AddNewFunnels";
 
 function App() {
   return (
@@ -40,6 +41,13 @@ function App() {
           element={
             <PrivateRouteComp >
               <Funnels />
+            </PrivateRouteComp>
+          }
+        />
+        <Route path="/tambah-funnels"
+          element={
+            <PrivateRouteComp >
+              <AddNewFunnels />
             </PrivateRouteComp>
           }
         />
