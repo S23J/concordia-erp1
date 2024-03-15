@@ -1,7 +1,8 @@
 import React from 'react'
-import NavbarComponent from '../../component/Navbar'
+import NavbarComponent from '../../../component/Navbar'
 
-function SalesManagerPage ()
+
+function SalesManagerHomePage ()
 {
     return (
         <>
@@ -13,4 +14,4 @@ function SalesManagerPage ()
     )
 }
 
-export default SalesManagerPage
+export default SalesManagerHomePage

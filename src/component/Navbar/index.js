@@ -8,7 +8,7 @@ import { LogoGsk } from '../../assets/images/image';
 
 function NavbarComponent ()
 {
-    const { tokens, setTokens, setUserInfo } = useContext( AuthContext );
+    const { tokens, setTokens, setUserInfo, userInfo } = useContext( AuthContext );
     const navigate = useNavigate();
 
     const LogoutSession = async () =>
@@ -61,6 +61,58 @@ function NavbarComponent ()
     };
 
 
+    const menuNavigasi = () =>
+    {
+        if ( userInfo?.groups.includes( 4 ) ) {
+            return (
+                <>
+                    <NavLink
+                        to='/sales-manager'
+                        className='my-2'
+                        style={ { textDecoration: 'none', color: 'white' } }
+                    >
+                        Home
+                    </NavLink>
+                    <NavLink
+                        // to='/data-karyawan'
+                        className='my-2'
+                        style={ { textDecoration: 'none', color: 'white' } }
+                    >
+                        Data Funnels
+                    </NavLink>
+                </>
+
+            )
+        } else if ( userInfo?.groups.includes( 3 ) ) {
+            return (
+                <>
+                    <NavLink
+                        to='/sales'
+                        className='my-2'
+                        style={ { textDecoration: 'none', color: 'white' } }
+                    >
+                        Home
+                    </NavLink>
+                    <NavLink
+                        to='/funnels'
+                        className='my-2'
+                        style={ { textDecoration: 'none', color: 'white' } }
+                    >
+                        Funnels
+                    </NavLink>
+                    <NavLink
+                        to='/order-request'
+                        className='my-2'
+                        style={ { textDecoration: 'none', color: 'white' } }
+                    >
+                        Order Request
+                    </NavLink>
+                </>
+            )
+        }
+    }
+
+
 
     return (
         <Navbar expand={ false } className="mb-3 mx-2" sticky="top" style={ { backgroundColor: '#FFFFFF', minHeight: '70px' } }>
@@ -91,48 +143,7 @@ function NavbarComponent ()
                     </Offcanvas.Header>
                     <Offcanvas.Body style={ { fontFamily: 'Poppins-Regular' } }>
                         <Nav className="justify-content-end flex-grow-1 pe-3">
-                            <NavLink
-                                to='/home'
-                                className='my-2'
-                                style={ { textDecoration: 'none', color: 'white' } }
-                            >
-                                Home
-                            </NavLink>
-                            {/* { groups?.includes( 'HRD GA' ) || groups?.includes( 'superuser' ) ?
-
-                                (
-                                    <>
-                                        <NavLink
-                                            to='/data-karyawan'
-                                            className='my-2'
-                                            style={ { textDecoration: 'none', color: 'white' } }
-                                        >
-                                            Data Karyawan
-                                        </NavLink>
-                                        <NavLink
-                                            to='/report'
-                                            className='my-2'
-                                            style={ { textDecoration: 'none', color: 'white' } }
-                                        >
-                                            Report
-                                        </NavLink>
-
-                                    </>
-                                )
-                                :
-                                (
-                                    <>
-
-                                        <NavLink
-                                            to='/data-absensi'
-                                            className='my-2'
-                                            style={ { textDecoration: 'none', color: 'white' } }
-                                        >
-                                            Data Absensi
-                                        </NavLink>
-                                    </>
-                                )
-                            } */}
+                            { menuNavigasi() }
                             <NavLink className='my-2' onClick={ LogoutSession } style={ { textDecoration: 'none', color: 'white' } }>Keluar</NavLink>
                         </Nav>
                     </Offcanvas.Body>

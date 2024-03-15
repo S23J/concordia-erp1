@@ -5,8 +5,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import PrivateRouteComp from "./auth/PrivateRoute";
 import Home from "./pages/Home";
-import SalesManagerPage from "./pages/SalesManagerPage";
-import SalesPage from "./pages/SalesPage";
+import SalesHomePage from "./pages/Sales/Home";
+import SalesManagerHomePage from "./pages/SalesManager/Home";
+import Funnels from "./pages/Sales/Funnels";
+import OrderRequest from "./pages/Sales/OrderRequest";
 
 function App() {
   return (
@@ -23,14 +25,28 @@ function App() {
         <Route path="/sales-manager"
           element={
             <PrivateRouteComp >
-              <SalesManagerPage />
+              <SalesManagerHomePage />
             </PrivateRouteComp>
           }
         />
         <Route path="/sales"
           element={
             <PrivateRouteComp >
-              <SalesPage />
+              <SalesHomePage />
+            </PrivateRouteComp>
+          }
+        />
+        <Route path="/funnels"
+          element={
+            <PrivateRouteComp >
+              <Funnels />
+            </PrivateRouteComp>
+          }
+        />
+        <Route path="/order-request"
+          element={
+            <PrivateRouteComp >
+              <OrderRequest />
             </PrivateRouteComp>
           }
         />

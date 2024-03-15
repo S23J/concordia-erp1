@@ -1,16 +1,16 @@
 import React from 'react'
-import NavbarComponent from '../../component/Navbar'
+import NavbarComponent from '../../../component/Navbar'
 
-function SalesPage ()
+function Funnels ()
 {
     return (
         <>
             <NavbarComponent />
             <div>
-                Sales Page
+                Funnels Page
             </div>
         </>
     )
 }
 
-export default SalesPage
+export default Funnels

@@ -27,7 +27,7 @@ function Login ()
     {
         event.preventDefault()
         setIsSubmittingLogin( true );
-        // setDisabled( true )
+        setDisabled( true )
         const data = {
             username: username,
             password: password,
@@ -52,48 +52,25 @@ function Login ()
                 win.setItem( "token", JSON.stringify( { token: userToken.token } ) )
                 setUserInfo( userInfo );
                 win.setItem( "userInfo", JSON.stringify( userInfo ) )
-                // Swal.fire( {
-                //     icon: 'success',
-                //     title: 'Login berhasil',
-                //     showConfirmButton: false,
-                //     timer: 2000
-                // } )
-                // setIsSubmittingLogin( false );
-                // setDisabled( false );
                 navigate( '/sales' )
             } else if ( userInfo.groups[ 0 ] === 4 ) {
                 setTokens( { token: userToken.token } );
                 win.setItem( "token", JSON.stringify( { token: userToken.token } ) )
                 setUserInfo( userInfo );
                 win.setItem( "userInfo", JSON.stringify( userInfo ) )
-                // Swal.fire( {
-                //     icon: 'success',
-                //     title: 'Login berhasil',
-                //     showConfirmButton: false,
-                //     timer: 2000
-                // } )
-                // setIsSubmittingLogin( false );
-                // setDisabled( false );
                 navigate( '/sales-manager' )
             }
-            // setTokens( { token: userToken.token } );
-            // win.setItem( "token", JSON.stringify( { token: userToken.token } ) )
-            // setUserInfo( userInfo );
-            // win.setItem( "userInfo", JSON.stringify( userInfo ) )
-            // Swal.fire( {
-            //     icon: 'success',
-            //     title: 'Login berhasil',
-            //     showConfirmButton: false,
-            //     timer: 2000
-            // } )
-            // setIsSubmittingLogin( false );
-            // setDisabled( false );
-
-            // navigate( '/home' )
-
+            Swal.fire( {
+                icon: 'success',
+                title: 'Login berhasil',
+                showConfirmButton: false,
+                timer: 2000
+            } )
+            setIsSubmittingLogin( false );
+            setDisabled( false );
         } catch ( err ) {
             // console.log( err )
-            if ( err.response?.status === 400 ) {
+            if ( !err?.response ) {
                 Swal.fire( {
                     icon: 'error',
                     title: 'Oops...',
@@ -192,7 +169,8 @@ function Login ()
                                 { isSubmittingLogin ? (
                                     <Button
                                         type="submit"
-                                        id='actionButtonLogin'
+                                        // id='actionButtonLogin'
+                                        style={ { border: '2px solid #01155C' } }
                                         variant='btn'
                                         disabled={ disabled }
                                     >
