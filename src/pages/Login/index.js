@@ -1,15 +1,14 @@
 import React, { useContext, useState } from 'react'
-import { Button, Col, Container, Form, Image, Row, Spinner } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom';
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
 import axios from '../../API/axios';
 import Swal from 'sweetalert2';
 import { AuthContext } from '../../auth';
 import { LogoGsk } from '../../assets';
-
+import { Grid, Container, Box, TextField, Button, CircularProgress, InputAdornment, IconButton, OutlinedInput, InputLabel, FormControl } from '@mui/material';
 function Login() {
-    const [username, setUser] = useState('');
-    const [password, setPwd] = useState('');
+    const [username, setUsername] = useState();
+    const [password, setPassword] = useState();
     const { setTokens, setUserInfo } = useContext(AuthContext);
     const [isSubmittingLogin, setIsSubmittingLogin] = useState(false);
     const [disabled, setDisabled] = useState(false);
@@ -29,7 +28,7 @@ function Login() {
             username: username,
             password: password,
         }
-        // console.log( data )
+        // console.log(data)
         try {
             const response = await axios.post(`/api/v1/profiles/auth/login/`, data,
                 {
@@ -41,7 +40,7 @@ function Login() {
                 }
 
             );
-            // console.log( response )
+            console.log(response)
             const userInfo = response?.data.user
             const userToken = response?.data
             if (userInfo.groups[0] === 3) {
@@ -66,7 +65,7 @@ function Login() {
             setIsSubmittingLogin(false);
             setDisabled(false);
         } catch (err) {
-            // console.log( err )
+            // console.log(err)
             if (!err?.response) {
                 Swal.fire({
                     icon: 'error',
@@ -92,103 +91,122 @@ function Login() {
                 setIsSubmittingLogin(false);
                 setDisabled(false);
             }
+
         }
+        setIsSubmittingLogin(false);
+        setDisabled(false);
+    };
+
+    const styleForm = {
+        '& label': {
+            fontFamily: 'Poppins-Medium', // Change the font-family of the label always
+        },
+        '& label.Mui-focused': {
+            color: '#01155C', // Change the color when focused
+            fontFamily: 'Poppins-Medium',
+        },
+        '& .MuiOutlinedInput-root': {
+            '&.Mui-focused fieldset': {
+                borderColor: '#01155C', // Change the outline color when focused
+            },
+        },
+        '& input': {
+            fontFamily: 'Poppins-Light', // Change the font-family
+        },
     };
 
     return (
         <Container
-            fluid
-            className='vh-100 d-flex align-items-center justify-content-center'
             id='containerFluid'
+            sx={{ display: 'flex', width: '100%', justifyContent: 'center', alignItems: 'center' }}
         >
-            <div
-                id='cardLogin'
-                className='text-center'
-            >
-                <Row
-                    className='mx-auto mt-5'
-                    style={{ maxWidth: '95%' }}
-                >
-                    <Col lg={6}
-                        className='my-auto '
-                    // style={ { minHeight: '' } }
-                    >
-                        <Image
-                            src={LogoGsk}
-                            fluid
-                        />
-                    </Col>
-                    <Col lg={6} className='my-auto mb-3 mt-3'>
-                        <h3
-                            className='text-center mb-4'
-                            style={{ fontFamily: 'Poppins-SemiBold' }}
-                        >
-                            Login
-                        </h3>
-                        <Form className='text-start' onSubmit={handleSubmitLogin}>
-                            <Form.Group className="mb-3">
-                                <Form.Label style={formStyles.label} htmlFor='usernameLogin'>Username*</Form.Label>
-                                <Form.Control
-                                    id='username'
-                                    type="text"
-                                    disabled={disabled}
-                                    onChange={(e) => setUser(e.target.value)}
-                                    value={username}
-                                    required
-                                    placeholder="Masukkan username anda"
-                                    style={formStyles.input}
-                                />
-                            </Form.Group>
-                            <Form.Group className="mb-3" >
-                                <Form.Label style={formStyles.label} htmlFor='passwordLogin'>Password*</Form.Label>
-                                <Form.Control
-                                    id='password'
-                                    type={passwordShown ? "text" : "password"}
-                                    disabled={disabled}
-                                    onChange={(e) => setPwd(e.target.value)}
-                                    value={password}
-                                    required
-                                    placeholder="Masukkan password anda"
-                                    style={formStyles.input}
-                                />
-                                <p className='mt-2' onClick={togglePassword} style={{ fontFamily: 'Poppins-Regular', cursor: 'pointer', maxWidth: '250px' }}>{passwordShown ? "Sembunyikan" : "Tampilkan"} password <span >{passwordShown ? <AiFillEyeInvisible /> : <AiFillEye />} </span></p>
-                            </Form.Group>
-                            {/* <div>
-                                <p
-                                    className='mt-4'
-                                    onClick={ handleShowLupaPassword }
-                                    style={ { fontFamily: 'Poppins-Regular', cursor: 'pointer', textDecoration: 'underline', color: '#12B3ED' } }
-                                >
-                                    Lupa password?
-                                </p>
-                            </div> */}
-                            <div className="d-grid gap-2 my-4">
-                                {isSubmittingLogin ? (
-                                    <Button
-                                        type="submit"
-                                        // id='actionButtonLogin'
-                                        style={{ border: '2px solid #01155C' }}
-                                        variant='btn'
-                                        disabled={disabled}
+            <Grid sx={{ display: 'flex', width: '100%', justifyContent: 'center', alignItems: 'center' }} container>
+                <Box id='cardLogin' sx={{ display: 'flex', width: '60%', p: 2, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
+
+                    <form onSubmit={handleSubmitLogin} autoComplete='off'>
+                        <Grid container item spacing={1} xs={12} md={12}>
+                            <Grid container item xs={12} md={6} sx={{ backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
+                                <img src={LogoGsk} />
+                            </Grid>
+                            <Grid container item spacing={3} xs={12} md={6} className='my-auto mb-3 mt-3'>
+                                <Grid item xs={12}>
+                                    <h3
+                                        className='text-center mb-4'
+                                        style={{ fontFamily: 'Poppins-SemiBold' }}
                                     >
-                                        <Spinner animation="border" size='sm' style={{ color: '#01155C' }} />
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        type="submit"
-                                        id='actionButtonLogin'
-                                        variant='primary'
-                                        disabled={disabled}
-                                    >
-                                        Masuk
-                                    </Button>
-                                )}
-                            </div>
-                        </Form>
-                    </Col>
-                </Row>
-            </div>
-        </Container>
+                                        Login
+                                    </h3>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        id="Username"
+                                        required
+                                        fullWidth
+                                        autoComplete="username"
+                                        value={username}
+                                        onChange={(event) => {
+                                            setUsername(event.target.value);
+                                        }}
+                                        label="Username"
+                                        variant="outlined"
+                                        sx={styleForm}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} >
+                                    <FormControl xs={12} sx={[styleForm, { width: '100%' }]} variant="outlined">
+                                        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                                        <OutlinedInput
+                                            endAdornment={
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        aria-label="toggle password visibility"
+                                                        onClick={togglePassword}
+                                                        edge="end"
+                                                    >
+                                                        {passwordShown ? <AiFillEyeInvisible /> : <AiFillEye />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            }
+                                            id="outlined-adornment-password"
+                                            type={passwordShown ? 'text' : 'password'}
+                                            autoComplete="current-password"
+                                            value={password}
+                                            onChange={(event) => {
+                                                setPassword(event.target.value);
+                                            }}
+                                            required
+                                            fullWidth
+                                            label="Password"
+
+                                            sx={styleForm}
+                                        />
+                                    </FormControl>
+                                </Grid>
+
+                                <Grid item xs={12}>
+                                    <div className="d-grid gap-2 my-4">
+
+                                        <Button
+                                            type="submit"
+                                            id='actionButtonLogin'
+                                            sx={{ border: '2px solid #01155C' }}
+                                            variant='text'
+
+                                            disabled={disabled}
+                                        >
+                                            {isSubmittingLogin ? <CircularProgress size={22} sx={{ color: '#01155C' }} /> : 'Masuk'}
+                                        </Button>
+
+                                    </div>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </form>
+                </Box>
+
+            </Grid >
+
+        </Container >
     )
 }
 
