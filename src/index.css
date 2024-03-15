@@ -119,7 +119,9 @@ code {
   box-shadow: none !important;
 }
 
-
+#tabelButton {
+  font-family: 'Poppins-Regular' !important;
+}
 
 /* Media query for smaller screens */
 @media only screen and (max-width: 768px) {
