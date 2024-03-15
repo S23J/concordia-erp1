@@ -1,8 +1,7 @@
 import React from 'react'
-import NavbarComponent from '../../../component/Navbar'
+import { NavbarComponent } from '../../../component'
 
-function OrderRequest ()
-{
+function OrderRequest() {
     return (
         <>
             <NavbarComponent />
