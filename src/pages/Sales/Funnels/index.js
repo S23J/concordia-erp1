@@ -1,47 +1,229 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import NavbarComponent from '../../../component/Navbar'
-import { Button, Col, Container, Row } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom';
+import { Box, Button, Grid, IconButton } from '@mui/material';
+import { AuthContext } from '../../../auth';
+import axios from '../../../API/axios';
+import Swal from 'sweetalert2';
+import { MdEdit } from "react-icons/md";
+import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
+
 
 function Funnels ()
 {
+    const { tokens, userInfo } = useContext( AuthContext );
+    const [ listFunnels, setListFunnels ] = useState( [] );
     const navigate = useNavigate();
-
     const handleAddFunnels = () =>
     {
         navigate( '/tambah-funnels' );
     }
+    const editFunnels = ( row ) =>
+    {
+        navigate( "/edit-funnels/" + row.id )
+    }
+    const numberFormat = ( value ) =>
+        new Intl.NumberFormat( 'IN-ID', {
+            style: 'currency',
+            currency: 'IDR'
+        } ).format( value );
+
+    const fetchListFunnels = () =>
+    {
+        axios.get( `/api/v1/crm/funnels/`,
+            {
+                headers:
+                {
+                    withCredentials: true,
+                    Authorization: `Token ${tokens?.token}`,
+                },
+
+            } )
+            .then( res =>
+            {
+                setListFunnels( res.data )
+
+            } ).catch( err =>
+            {
+                if ( err.response?.status === 401 ) {
+                    Swal.fire( {
+                        icon: 'error',
+                        title: 'Sesi telah habis',
+                        text: 'Sesi anda telah berakhir. Silahkan login kembali.',
+                        confirmButtonText: 'Log In',
+                    } ).then( ( result ) =>
+                    {
+                        if ( result.isConfirmed ) {
+                            navigate( '/' );
+                        }
+                    } );
+
+                } else ( console.log( err ) )
+            } )
+    }
+
+    useEffect( () =>
+    {
+
+        if ( userInfo?.id != null ) fetchListFunnels()
+
+    }, [ userInfo?.id ] );
+
+
+    const getColumns = () => [
+        {
+            accessorFn: ( row ) => new Date( row.created_at ),
+            header: 'Tanggal',
+            filterVariant: 'date-range',
+            Cell: ( { cell } ) => cell.getValue().toLocaleDateString(),
+            mantineTableHeadCellProps: {
+                align: 'center',
+            },
+            mantineTableBodyCellProps: {
+                align: 'center',
+            },
+        },
+        {
+            header: 'Funnel No.',
+            accessorKey: 'funnel_no',
+            mantineTableHeadCellProps: {
+                align: 'center',
+            },
+            mantineTableBodyCellProps: {
+                align: 'center',
+            },
+        },
+        {
+            header: 'Pelanggan',
+            accessorKey: 'customer',
+            mantineTableHeadCellProps: {
+                align: 'center',
+            },
+            mantineTableBodyCellProps: {
+                align: 'center',
+            },
+        },
+        {
+            header: 'Kontak',
+            accessorKey: 'contact_person',
+            mantineTableHeadCellProps: {
+                align: 'center',
+            },
+            mantineTableBodyCellProps: {
+                align: 'center',
+            },
+        },
+        {
+            header: 'Grand Total',
+            accessorFn: row => (
+                <p>
+                    { numberFormat( row.grand_total ) }
+                </p>
+            ),
+            mantineTableHeadCellProps: {
+                align: 'center',
+            },
+            mantineTableBodyCellProps: {
+                align: 'center',
+            },
+        },
+        {
+            header: 'Edit',
+            accessorFn: ( row ) => (
+                <IconButton aria-label="delete" color="secondary" onClick={ () => { editFunnels( row ) } }>
+                    <MdEdit />
+                </IconButton>
+            ),
+            mantineTableHeadCellProps: {
+                align: 'center',
+            },
+            mantineTableBodyCellProps: {
+                align: 'center',
+            },
+        },
+
+    ];
+
+
+    const columns = getColumns();
+
+
+    const table = useMantineReactTable( {
+        columns,
+        enableDensityToggle: false,
+        initialState: { density: 'xs' },
+        data: listFunnels,
+        enableRowNumbers: true,
+        rowNumberMode: 'static',
+        enableGlobalFilter: false,
+        enableColumnResizing: false,
+        isMultiSortEvent: () => true,
+        mantineTableProps: {
+            striped: true,
+
+        },
+        // renderTopToolbarCustomActions: ( { table } ) => (
+        //     <Box
+        //         sx={ {
+        //             display: 'flex',
+        //             gap: '16px',
+        //             padding: '8px',
+        //             flexWrap: 'wrap',
+        //         } }
+        //     >
+        //     </Box>
+        // ),
+        // renderToolbarInternalActions: ( { table } ) => (
+        //     <Flex gap="xs" align="center">
+        //         {/* add custom button to print table  */ }
+        //         <Button
+        //             onClick={ handleOpen }
+        //             variant="contained"
+        //             id='tabelButton'
+        //         >
+        //             Tambah Produk
+        //         </Button>
+        //     </Flex>
+        // ),
+    } );
+
 
     return (
         <>
             <NavbarComponent />
-            <Container fluid className='mt-4'>
-                <Row >
-                    <Col lg={ 6 } className='my-auto'>
-                        <h2 className='text-start' style={ { fontFamily: 'Poppins-Regular' } }>
+            <div style={ { display: 'flex', justifyContent: 'center', alignItems: 'center' } }>
+                <Grid container marginTop={ 3 } style={ { maxWidth: '95%', display: 'flex', justifyContent: 'center', alignItems: 'center' } }>
+                    <Grid item lg={ 6 } xs={ 6 } style={ { display: 'flex', alignItems: 'center' } }>
+                        <h2 style={ { fontFamily: 'Poppins-Regular' } }>
                             Funnels
                         </h2>
-                    </Col>
-                    <Col lg={ 6 }>
-                        <div className='text-end'>
+                    </Grid>
+                    <Grid item lg={ 6 } xs={ 6 }>
+                        <div style={ { display: 'flex', alignItems: 'end', justifyContent: 'end' } }>
                             <Button
-                                variant='btn'
+                                variant='contained'
+                                id='tabelButton'
                                 onClick={ handleAddFunnels }
-                                style={ {
-                                    backgroundColor: '#01155C',
-                                    color: '#FFFFFF',
-                                    fontFamily: 'Poppins-Medium',
+                                sx={ {
                                     minHeight: '50px',
-                                    minWidth: '120px'
                                 } }
                             >
                                 Buat baru
                             </Button>
                         </div>
+                    </Grid>
+                </Grid>
 
-                    </Col>
-                </Row>
-            </Container>
+            </div>
+            <div>
+                <Box sx={ { overflow: "auto" } } marginTop={ 5 } marginX={ 3 }>
+                    <Box sx={ { width: "100%", display: "table", tableLayout: "fixed" } }>
+                        <MantineReactTable
+                            table={ table }
+                        />
+                    </Box>
+                </Box>
+            </div>
         </>
     )
 }

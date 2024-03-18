@@ -10,6 +10,7 @@ import SalesManagerHomePage from "./pages/SalesManager/Home";
 import Funnels from "./pages/Sales/Funnels";
 import OrderRequest from "./pages/Sales/OrderRequest";
 import AddNewFunnels from "./pages/Sales/AddNewFunnels";
+import EditFunnels from "./pages/Sales/EditFunnels";
 
 function App() {
   return (
@@ -48,6 +49,13 @@ function App() {
           element={
             <PrivateRouteComp >
               <AddNewFunnels />
+            </PrivateRouteComp>
+          }
+        />
+        <Route path="/edit-funnels/:transid"
+          element={
+            <PrivateRouteComp >
+              <EditFunnels />
             </PrivateRouteComp>
           }
         />
