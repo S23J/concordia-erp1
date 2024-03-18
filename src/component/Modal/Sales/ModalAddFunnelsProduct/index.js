@@ -1,4 +1,4 @@
-import { Box, Modal, Typography, IconButton, TextField, Grid, Button } from '@mui/material';
+import { Box, Modal, Typography, IconButton, TextField, Grid, Button, Alert } from '@mui/material';
 import { IoCloseOutline } from "react-icons/io5";
 import React, { useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
@@ -11,30 +11,34 @@ function ModalAddFunnelsProduct ( {
 {
 
     const isMobile = useMediaQuery( { maxWidth: 767 } );
-
-    const numberFormat = ( value ) =>
-        new Intl.NumberFormat( 'IN-ID', {
-            style: 'currency',
-            currency: 'IDR'
-        } ).format( value );
-
     const [ productName, setProductName ] = useState( '' );
     const [ qty, setQty ] = useState( '' );
     const [ price, setPrice ] = useState( '' );
     const [ desc, setDesc ] = useState( '' );
+    const [ showAlert, setShowAlert ] = useState( false ); // State for showing the alert
 
     const handleSave = () =>
     {
+        if ( !productName || !qty || !price ) {
+            setShowAlert( true ); // Show the alert
+            return;
+        }
+        const subtotal = parseInt( price ) * parseInt( qty );
         const newData = {
             product: productName,
             qty: parseInt( qty ),
             price: parseInt( price ),
-            desc: desc
+            description: desc,
+            subtotal: subtotal,
         };
         addDataToTable( newData );
         handleClose();
     };
 
+    const handleCloseAlert = () =>
+    {
+        setShowAlert( false ); // Hide the alert
+    };
 
     const style = {
         position: 'absolute',
@@ -53,6 +57,14 @@ function ModalAddFunnelsProduct ( {
         boxShadow: 24,
         p: 4,
     };
+
+
+    function handleChangePrice ( e )
+    {
+        const inputValue = e.target.value;
+        const numericValue = parseFloat( inputValue.replace( /[^\d]/g, '' ) ) || 0;
+        setPrice( numericValue );
+    }
 
 
     const handleClose = () =>
@@ -82,58 +94,70 @@ function ModalAddFunnelsProduct ( {
                     </IconButton>
                 </Box>
                 <hr />
-                <Grid container spacing={ 1 }>
-                    <Grid item xs={ 12 } marginY={ 2 }>
-                        <TextField
-                            id="productName"
-                            fullWidth
-                            required
-                            label="Nama Produk"
-                            variant="outlined"
-                            value={ productName }
-                            onChange={ ( e ) => setProductName( e.target.value ) }
-                            sx={ styleForm }
-                        />
+                <>
+                    {/* Conditional rendering for the alert */ }
+                    { showAlert && (
+                        <Alert severity="warning" onClose={ handleCloseAlert }>Please fill in all required fields.</Alert>
+                    ) }
+                    <Grid container>
+                        <Grid item xs={ 12 } marginY={ 2 }>
+                            <TextField
+                                id="productName"
+                                fullWidth
+                                required
+                                label="Nama Produk"
+                                variant="outlined"
+                                value={ productName }
+                                onChange={ ( e ) => setProductName( e.target.value ) }
+                                sx={ styleForm }
+                            />
+                        </Grid>
+                        <Grid item xs={ 12 } marginBottom={ 2 }>
+                            <TextField
+                                id="qty"
+                                fullWidth
+                                required
+                                type='number'
+                                label="Qty"
+                                variant="outlined"
+                                value={ qty }
+                                onChange={ ( e ) => setQty( e.target.value ) }
+                                sx={ styleForm }
+                            />
+                        </Grid>
+                        <Grid item xs={ 12 } marginBottom={ 2 }>
+                            <TextField
+                                id="price"
+                                fullWidth
+                                required
+                                type='text'
+                                label="Harga"
+                                variant="outlined"
+                                value={ `Rp ${price.toLocaleString()}` }
+                                onChange={ handleChangePrice }
+                                sx={ styleForm }
+                            />
+                        </Grid>
+                        <Grid item xs={ 12 } marginBottom={ 2 }>
+                            <TextField
+                                id="desc"
+                                label="Deskripsi"
+                                fullWidth
+                                multiline
+                                rows={ 3 }
+                                value={ desc }
+                                onChange={ ( e ) => setDesc( e.target.value ) }
+                                InputProps={ {
+                                    sx: {
+                                        fontFamily: 'Poppins-Light', // Change the font-family
+                                        minWidth: '100%'
+                                    }
+                                } }
+                                sx={ styleForm }
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid item xs={ 12 } marginBottom={ 2 }>
-                        <TextField
-                            id="qty"
-                            fullWidth
-                            required
-                            type='number'
-                            label="Qty"
-                            variant="outlined"
-                            value={ qty }
-                            onChange={ ( e ) => setQty( e.target.value ) }
-                            sx={ styleForm }
-                        />
-                    </Grid>
-                    <Grid item xs={ 12 } marginBottom={ 2 }>
-                        <TextField
-                            id="price"
-                            fullWidth
-                            required
-                            type='number'
-                            label="Harga"
-                            variant="outlined"
-                            value={ price }
-                            onChange={ ( e ) => setPrice( e.target.value ) }
-                            sx={ styleForm }
-                        />
-                    </Grid>
-                    <Grid item xs={ 12 } marginBottom={ 2 }>
-                        <TextField
-                            id="desc"
-                            label="Deskripsi"
-                            fullWidth
-                            multiline
-                            rows={ 3 }
-                            value={ desc }
-                            onChange={ ( e ) => setDesc( e.target.value ) }
-                            sx={ styleForm }
-                        />
-                    </Grid>
-                </Grid>
+                </>
                 <hr />
                 <Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
                     <Button variant='contained' onClick={ handleSave }>Simpan</Button>

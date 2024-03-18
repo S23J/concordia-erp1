@@ -123,6 +123,9 @@ code {
   font-family: 'Poppins-Regular' !important;
 }
 
+.mantine-h1g4yy {
+  font-family: 'Poppins-Regular' !important;
+}
 /* Media query for smaller screens */
 @media only screen and (max-width: 768px) {
   #cardLogin {

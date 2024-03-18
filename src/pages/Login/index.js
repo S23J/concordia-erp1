@@ -7,12 +7,12 @@ import { AuthContext } from '../../auth';
 import { LogoGsk } from '../../assets';
 import { Grid, Container, Box, TextField, Button, CircularProgress, InputAdornment, IconButton, OutlinedInput, InputLabel, FormControl } from '@mui/material';
 function Login() {
-    const [username, setUsername] = useState();
-    const [password, setPassword] = useState();
+    const [ username, setUsername ] = useState( '' );
+    const [ password, setPassword ] = useState( '' );
     const { setTokens, setUserInfo } = useContext(AuthContext);
     const [isSubmittingLogin, setIsSubmittingLogin] = useState(false);
     const [disabled, setDisabled] = useState(false);
-    const navigate = useNavigate();
+    const navigate = useNavigate( '' );
     const [passwordShown, setPasswordShown] = useState(false);
     const togglePassword = () => {
         setPasswordShown(!passwordShown);
@@ -40,7 +40,7 @@ function Login() {
                 }
 
             );
-            console.log(response)
+            // console.log(response)
             const userInfo = response?.data.user
             const userToken = response?.data
             if (userInfo.groups[0] === 3) {
@@ -126,7 +126,10 @@ function Login() {
                     <form onSubmit={handleSubmitLogin} autoComplete='off'>
                         <Grid container item spacing={1} xs={12} md={12}>
                             <Grid container item xs={12} md={6} sx={{ backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
-                                <img src={LogoGsk} />
+                                <img
+                                    alt='logoGSK'
+                                    src={ LogoGsk }
+                                />
                             </Grid>
                             <Grid container item spacing={3} xs={12} md={6} className='my-auto mb-3 mt-3'>
                                 <Grid item xs={12}>
