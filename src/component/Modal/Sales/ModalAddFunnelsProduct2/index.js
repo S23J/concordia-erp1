@@ -64,16 +64,17 @@ function ModalAddFunnelsProduct2 ( {
                 }
             );
             // console.log( response );
+            handleClose();
             Swal.fire( {
                 icon: 'success',
                 title: 'Funnels detail berhasil di tambahkan',
                 showConfirmButton: false,
                 timer: 2000
             } )
-            handleClose();
             fetchFunnelsDataDetail();
         } catch ( err ) {
             console.log( err )
+            handleClose();
             Swal.fire( {
                 icon: 'error',
                 title: 'Warning!',

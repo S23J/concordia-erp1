@@ -11,13 +11,17 @@ import Funnels from "./pages/Sales/Funnels";
 import OrderRequest from "./pages/Sales/OrderRequest";
 import AddNewFunnels from "./pages/Sales/AddNewFunnels";
 import EditFunnels from "./pages/Sales/EditFunnels";
-import { ListFunnels } from "./pages";
+import AddCustomerCategory from "./pages/MasterDataPages/Customer/AddCustomerCategory";
+import ListCustomer from "./pages/MasterDataPages/Customer/ListCustomer";
+import AddCustomer from "./pages/MasterDataPages/Customer/AddCustomer";
+import EditCustomer from "./pages/MasterDataPages/Customer/EditCustomer";
+
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={ <Login /> } />
         {/* <Route path="/home"
           element={
             <PrivateRouteComp >
@@ -46,13 +50,6 @@ function App() {
             </PrivateRouteComp>
           }
         />
-        <Route path="/data-funnels"
-          element={
-            <PrivateRouteComp >
-              <ListFunnels />
-            </PrivateRouteComp>
-          }
-        />
         <Route path="/tambah-funnels"
           element={
             <PrivateRouteComp >
@@ -71,6 +68,34 @@ function App() {
           element={
             <PrivateRouteComp >
               <OrderRequest />
+            </PrivateRouteComp>
+          }
+        />
+        <Route path="/customer-category"
+          element={
+            <PrivateRouteComp >
+              <AddCustomerCategory />
+            </PrivateRouteComp>
+          }
+        />
+        <Route path="/customer"
+          element={
+            <PrivateRouteComp >
+              < ListCustomer />
+            </PrivateRouteComp>
+          }
+        />
+        <Route path="/add-customer"
+          element={
+            <PrivateRouteComp >
+              < AddCustomer />
+            </PrivateRouteComp>
+          }
+        />
+        <Route path="/edit-customer/:custid"
+          element={
+            <PrivateRouteComp >
+              <EditCustomer />
             </PrivateRouteComp>
           }
         />

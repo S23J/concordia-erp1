@@ -43,7 +43,6 @@ function EditFunnels ()
     };
     const [ status, setStatus ] = useState( 20 );
 
-    // console.log( funnelsData?.status )
 
     const handleChangeStatus = ( event ) =>
     {
@@ -77,31 +76,18 @@ function EditFunnels ()
 
             } ).catch( err =>
             {
-                if ( err.response?.status === 401 ) {
-                    Swal.fire( {
-                        icon: 'error',
-                        title: 'Sesi telah habis',
-                        text: 'Sesi anda telah berakhir. Silahkan login kembali.',
-                        confirmButtonText: 'Log In',
-                    } ).then( ( result ) =>
-                    {
-                        if ( result.isConfirmed ) {
-                            // Redirect the user to the login page or perform any other necessary actions
-                            // e.g., using React Router
-                            navigate( '/' );
-                        }
-                    } );
-
-                } else ( console.log( err ) )
+                console.log( err ) 
             } )
     }
     useEffect( () =>
     {
         if ( transid !== undefined ) {
             fetchFunnelsData()
+        } else if ( tokens?.token !== undefined ) {
+            fetchFunnelsDataDetail();
         }
 
-    }, [ transid ] )
+    }, [ transid, tokens?.token ] )
 
     const fetchFunnelsDataDetail = () =>
     {
@@ -121,21 +107,9 @@ function EditFunnels ()
             } )
             .catch( err =>
             {
-                if ( err.response?.status === 401 ) {
-                    Swal.fire( {
-                        icon: 'error',
-                        title: 'Sesi telah habis',
-                        text: 'Sesi anda telah berakhir. Silahkan login kembali.',
-                        confirmButtonText: 'Log In',
-                    } ).then( ( result ) =>
-                    {
-                        if ( result.isConfirmed ) {
-                            navigate( '/' );
-                        }
-                    } );
-                } else {
+
                     console.log( err );
-                }
+
             } );
     }
 
@@ -143,8 +117,10 @@ function EditFunnels ()
     {
         if ( funnelsData.id !== undefined ) {
             fetchFunnelsDataDetail();
+        } else if ( tokens?.token != null ) {
+            fetchFunnelsDataDetail();
         }
-    }, [ funnelsData.id ] );
+    }, [ funnelsData.id, tokens?.token ] );
 
 
 

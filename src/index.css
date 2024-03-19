@@ -99,6 +99,21 @@ code {
   }
 }
 
+.css-cveggr-MuiListItemIcon-root {
+  color: white !important;
+}
+
+#dropdownText {
+  color: white;
+}
+
+.css-1wc848c-MuiFormHelperText-root {
+  font-family: 'Poppins-Light' !important;
+}
+
+.css-10hburv-MuiTypography-root {
+  font-family: 'Poppins-Regular' !important;
+}
 
 .swal2-title {
   font-family: 'Poppins-Medium' !important;
@@ -131,6 +146,13 @@ code {
 }
 
 .mantine-1d564l0 {
+  font-family: 'Poppins-Regular' !important;
+}
+.mantine-1bauqbv {
+  font-family: 'Poppins-Regular' !important;
+}
+
+.mantine-1cn2mlo {
   font-family: 'Poppins-Regular' !important;
 }
 /* Media query for smaller screens */
