@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import NavbarComponent from '../../../component/Navbar'
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, Grid, IconButton } from '@mui/material';
 import { AuthContext } from '../../../auth';
@@ -7,7 +6,7 @@ import axios from '../../../API/axios';
 import Swal from 'sweetalert2';
 import { MdInfo } from "react-icons/md";
 import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
-import { ModalApproval } from '../../../component';
+import { ModalApproval, NavbarComponent } from '../../../component';
 
 
 function ListFunnels() {
@@ -73,15 +72,29 @@ function ListFunnels() {
 
     const getColumns = () => [
         {
+            header: 'Detail',
+            accessorFn: (row) => (
+                <IconButton aria-label="delete" onClick={() => { openModalApproval(row) }}>
+                    <MdInfo color={'black'} />
+                </IconButton>
+            ),
+            mantineTableHeadCellProps: {
+                align: 'left',
+            },
+            mantineTableBodyCellProps: {
+                align: 'left',
+            },
+        },
+        {
             accessorFn: (row) => new Date(row.created_at),
             header: 'Tanggal',
             filterVariant: 'date-range',
             Cell: ({ cell }) => cell.getValue().toLocaleDateString(),
             mantineTableHeadCellProps: {
-                align: 'center',
+                align: 'left',
             },
             mantineTableBodyCellProps: {
-                align: 'center',
+                align: 'left',
             },
         },
         {
@@ -185,20 +198,7 @@ function ListFunnels() {
 
             },
         },
-        {
-            header: 'Detail',
-            accessorFn: (row) => (
-                <IconButton aria-label="delete" color="secondary" onClick={() => { openModalApproval(row) }}>
-                    <MdInfo color={'black'} />
-                </IconButton>
-            ),
-            mantineTableHeadCellProps: {
-                align: 'center',
-            },
-            mantineTableBodyCellProps: {
-                align: 'center',
-            },
-        },
+
 
 
     ];
@@ -212,8 +212,8 @@ function ListFunnels() {
         enableDensityToggle: false,
         initialState: { density: 'xs' },
         data: listFunnels,
-        enableRowNumbers: true,
-        rowNumberMode: 'static',
+        // enableRowNumbers: true,
+        // rowNumberMode: 'static',
         enableGlobalFilter: false,
         enableColumnResizing: false,
         isMultiSortEvent: () => true,
@@ -221,29 +221,6 @@ function ListFunnels() {
             striped: true,
 
         },
-        // renderTopToolbarCustomActions: ( { table } ) => (
-        //     <Box
-        //         sx={ {
-        //             display: 'flex',
-        //             gap: '16px',
-        //             padding: '8px',
-        //             flexWrap: 'wrap',
-        //         } }
-        //     >
-        //     </Box>
-        // ),
-        // renderToolbarInternalActions: ( { table } ) => (
-        //     <Flex gap="xs" align="center">
-        //         {/* add custom button to print table  */ }
-        //         <Button
-        //             onClick={ handleOpen }
-        //             variant="contained"
-        //             id='tabelButton'
-        //         >
-        //             Tambah Produk
-        //         </Button>
-        //     </Flex>
-        // ),
     });
 
 
@@ -252,25 +229,12 @@ function ListFunnels() {
             <NavbarComponent />
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Grid container marginTop={3} style={{ maxWidth: '95%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <Grid item lg={6} xs={6} style={{ display: 'flex', alignItems: 'center' }}>
+                    <Grid item xs={12} style={{ display: 'flex', alignItems: 'center' }}>
                         <h2 style={{ fontFamily: 'Poppins-Regular' }}>
-                            Funnels
+                            Daftar Funnels
                         </h2>
                     </Grid>
-                    <Grid item lg={6} xs={6}>
-                        <div style={{ display: 'flex', alignItems: 'end', justifyContent: 'end' }}>
-                            <Button
-                                variant='contained'
-                                id='tabelButton'
-                                onClick={handleAddFunnels}
-                                sx={{
-                                    minHeight: '50px',
-                                }}
-                            >
-                                Buat baru
-                            </Button>
-                        </div>
-                    </Grid>
+
                 </Grid>
 
             </div>
@@ -283,7 +247,7 @@ function ListFunnels() {
                     </Box>
                 </Box>
             </div>
-            <ModalApproval open={visibilityModalApproval} id={selectedId} toogleOpenModalApproval={toogleOpenModalApproval} />
+            <ModalApproval fetchListFunnels={fetchListFunnels} open={visibilityModalApproval} id={selectedId} setVisibilityModalApproval={setVisibilityModalApproval} toogleOpenModalApproval={toogleOpenModalApproval} />
         </>
     )
 }

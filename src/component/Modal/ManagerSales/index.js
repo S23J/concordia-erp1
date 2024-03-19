@@ -1,4 +1,3 @@
-import ModalApproval from "./ModalApproval"
-
+import ModalApproval from "./ModalApproval";
 
 export { ModalApproval }

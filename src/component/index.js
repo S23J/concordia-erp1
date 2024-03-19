@@ -1,6 +1,16 @@
 import NavbarComponent from "./Navbar";
 import { CustomList } from "./CustomListSidebar";
-
-export * from "./Modal"
-
-export { NavbarComponent, CustomList }
+import {
+    ModalAddFunnelsProduct,
+    ModalApproval,
+    ModalAddFunnelsProduct2,
+    ModalEditFunnelsProduct
+} from "./Modal";
+export {
+    ModalAddFunnelsProduct,
+    ModalApproval,
+    ModalAddFunnelsProduct2,
+    ModalEditFunnelsProduct,
+    NavbarComponent,
+    CustomList
+}

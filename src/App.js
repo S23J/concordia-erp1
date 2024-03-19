@@ -11,17 +11,17 @@ import Funnels from "./pages/Sales/Funnels";
 import OrderRequest from "./pages/Sales/OrderRequest";
 import AddNewFunnels from "./pages/Sales/AddNewFunnels";
 import EditFunnels from "./pages/Sales/EditFunnels";
-import AddCustomerCategory from "./pages/MasterDataPages/Customer/AddCustomerCategory";
 import ListCustomer from "./pages/MasterDataPages/Customer/ListCustomer";
 import AddCustomer from "./pages/MasterDataPages/Customer/AddCustomer";
 import EditCustomer from "./pages/MasterDataPages/Customer/EditCustomer";
+import { ListFunnels } from "./pages";
 
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={ <Login /> } />
+        <Route path="/" element={<Login />} />
         {/* <Route path="/home"
           element={
             <PrivateRouteComp >
@@ -33,6 +33,13 @@ function App() {
           element={
             <PrivateRouteComp >
               <SalesManagerHomePage />
+            </PrivateRouteComp>
+          }
+        />
+        <Route path="/data-funnels"
+          element={
+            <PrivateRouteComp >
+              <ListFunnels />
             </PrivateRouteComp>
           }
         />
@@ -68,13 +75,6 @@ function App() {
           element={
             <PrivateRouteComp >
               <OrderRequest />
-            </PrivateRouteComp>
-          }
-        />
-        <Route path="/customer-category"
-          element={
-            <PrivateRouteComp >
-              <AddCustomerCategory />
             </PrivateRouteComp>
           }
         />
