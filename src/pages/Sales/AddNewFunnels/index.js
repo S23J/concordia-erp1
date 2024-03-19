@@ -429,7 +429,7 @@ function AddNewFunnels ()
                                                     },
                                                 } }
                                             >
-                                                <MenuItem value={ 20 } sx={ selectFormValue }>20%-Lead</MenuItem>
+                                                <MenuItem value={ 20 } sx={ selectFormValue }>20%-Prospek</MenuItem>
                                                 <MenuItem value={ 40 } sx={ selectFormValue }>40%-Permintaan Harga</MenuItem>
                                                 <MenuItem value={ 60 } sx={ selectFormValue }>60%-Penawaran Harga</MenuItem>
                                                 <MenuItem value={ 80 } sx={ selectFormValue }>80%-Menunggu PO</MenuItem>

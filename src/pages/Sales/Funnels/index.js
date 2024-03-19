@@ -41,7 +41,9 @@ function Funnels ()
             } )
             .then( res =>
             {
-                setListFunnels( res.data )
+                const filteredData = res.data.filter( item => item.sales === userInfo?.id );
+                setListFunnels( filteredData );
+                // console.log( res.data )
 
             } ).catch( err =>
             {

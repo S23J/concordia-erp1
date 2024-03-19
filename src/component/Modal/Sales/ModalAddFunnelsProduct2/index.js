@@ -1,22 +1,25 @@
-import { Box, Modal, Typography, IconButton, TextField, Grid, Button, Alert } from '@mui/material';
-import { IoCloseOutline } from "react-icons/io5";
-import React, { useState } from 'react';
+import { Alert, Box, Button, Grid, IconButton, Modal, TextField, Typography } from '@mui/material';
+import React, { useContext, useState } from 'react'
+import { IoCloseOutline } from 'react-icons/io5';
 import { useMediaQuery } from 'react-responsive';
+import Swal from 'sweetalert2';
+import { AuthContext } from '../../../../auth';
+import axios from '../../../../API/axios';
 
-function ModalAddFunnelsProduct ( {
+function ModalAddFunnelsProduct2 ( {
     addFunnelsProduct,
     setAddFunnelsProduct,
-    addDataToTable
+    fetchFunnelsDataDetail,
+    funnelsData
 } )
 {
-
     const isMobile = useMediaQuery( { maxWidth: 767 } );
+    const { tokens } = useContext( AuthContext );
     const [ productName, setProductName ] = useState( '' );
     const [ qty, setQty ] = useState( '' );
     const [ price, setPrice ] = useState( '' );
     const [ desc, setDesc ] = useState( '' );
     const [ showAlert, setShowAlert ] = useState( false ); // State for showing the alert
-
 
     const handleClose = () =>
     {
@@ -27,28 +30,58 @@ function ModalAddFunnelsProduct ( {
         setDesc( '' );
     }
 
-
-    const handleSave = () =>
+    const handleCloseAlert = () =>
     {
+        setShowAlert( false ); // Hide the alert
+    };
+
+    const handleSave = async ( event ) =>
+    {
+        event.preventDefault();
         if ( !productName || !qty || !price ) {
             setShowAlert( true ); // Show the alert
             return;
         }
         const subtotal = parseInt( price ) * parseInt( qty );
-        const newData = {
+        const data = {
             product: productName,
-            qty: parseInt( qty ),
-            price: parseInt( price ),
+            qty: qty,
+            price: price,
             description: desc,
             subtotal: subtotal,
-        };
-        addDataToTable( newData );
-        handleClose();
-    };
+            funnel: funnelsData?.id,
+        }
+        // console.log( data )
+        try {
 
-    const handleCloseAlert = () =>
-    {
-        setShowAlert( false ); // Hide the alert
+            const response = await axios.post( `/api/v1/crm/funneldetails/`, data,
+                {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        withCredentials: true,
+                        Authorization: `Token ${tokens?.token}`,
+                    },
+                }
+            );
+            // console.log( response );
+            Swal.fire( {
+                icon: 'success',
+                title: 'Funnels detail berhasil di tambahkan',
+                showConfirmButton: false,
+                timer: 2000
+            } )
+            handleClose();
+            fetchFunnelsDataDetail();
+        } catch ( err ) {
+            console.log( err )
+            Swal.fire( {
+                icon: 'error',
+                title: 'Warning!',
+                text: 'Something is wrong',
+            } )
+        }
+
+
     };
 
     const style = {
@@ -83,7 +116,6 @@ function ModalAddFunnelsProduct ( {
             onClose={ handleClose }
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
-
         >
             <Box sx={ style }>
                 <Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 } }>
@@ -165,11 +197,13 @@ function ModalAddFunnelsProduct ( {
                     <Button variant='outlined' onClick={ handleClose }>Batal</Button>
                 </Box>
             </Box>
+
+
         </Modal>
     )
 }
 
-export default ModalAddFunnelsProduct;
+export default ModalAddFunnelsProduct2
 
 
 const styleForm = {
