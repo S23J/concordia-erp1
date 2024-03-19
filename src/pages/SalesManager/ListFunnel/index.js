@@ -5,19 +5,28 @@ import { Box, Button, Grid, IconButton } from '@mui/material';
 import { AuthContext } from '../../../auth';
 import axios from '../../../API/axios';
 import Swal from 'sweetalert2';
-import { MdEdit } from "react-icons/md";
+import { MdInfo } from "react-icons/md";
 import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
+import { ModalApproval } from '../../../component';
 
 
-function Funnels() {
+function ListFunnels() {
     const { tokens, userInfo } = useContext(AuthContext);
     const [listFunnels, setListFunnels] = useState([]);
+    const [visibilityModalApproval, setVisibilityModalApproval] = useState(false);
+    const [selectedId, setSelectedId] = useState()
     const navigate = useNavigate();
     const handleAddFunnels = () => {
         navigate('/tambah-funnels');
     }
-    const editFunnels = (row) => {
-        navigate("/edit-funnels/" + row.id)
+
+    const toogleOpenModalApproval = () => {
+        setVisibilityModalApproval(!visibilityModalApproval)
+    }
+
+    const openModalApproval = (row) => {
+        setSelectedId(row.id)
+        toogleOpenModalApproval()
     }
     const numberFormat = (value) =>
         new Intl.NumberFormat('IN-ID', {
@@ -36,9 +45,7 @@ function Funnels() {
 
             })
             .then(res => {
-                const filteredData = res.data.filter(item => item.sales === userInfo?.id);
-                setListFunnels(filteredData);
-                // console.log( res.data )
+                setListFunnels(res.data)
 
             }).catch(err => {
                 if (err.response?.status === 401) {
@@ -88,6 +95,37 @@ function Funnels() {
             },
         },
         {
+            header: 'Status',
+            accessorFn: (row) => (
+                <>
+                    {(() => {
+                        switch (row.status) {
+                            case 0:
+                                return '0% - Gagal';
+                            case 20:
+                                return '20% - Lead';
+                            case 40:
+                                return '40% - Permintaan Harga';
+                            case 60:
+                                return '60% - Penawaran Harga';
+                            case 80:
+                                return '80% - Menunggu PO';
+                            case 100:
+                                return '100% - Done';
+                            default:
+                                return null
+                        }
+                    })()}
+                </>
+            ),
+            mantineTableHeadCellProps: {
+                align: 'center',
+            },
+            mantineTableBodyCellProps: {
+                align: 'center',
+            },
+        },
+        {
             header: 'Pelanggan',
             accessorKey: 'customer',
             mantineTableHeadCellProps: {
@@ -122,10 +160,36 @@ function Funnels() {
             },
         },
         {
-            header: 'Edit',
+            header: 'Approval',
             accessorFn: (row) => (
-                <IconButton aria-label="delete" color="secondary" onClick={() => { editFunnels(row) }}>
-                    <MdEdit />
+                <>
+                    {(() => {
+                        switch (row.approval) {
+                            case null:
+                                return 'Belum diApprove';
+                            case true:
+                                return 'Sudah diApprove';
+                            case false:
+                                return 'Tidak diApprove';
+                            default:
+                                return null
+                        }
+                    })()}
+                </>
+            ),
+            mantineTableHeadCellProps: {
+                align: 'center',
+            },
+            mantineTableBodyCellProps: {
+                align: 'center',
+
+            },
+        },
+        {
+            header: 'Detail',
+            accessorFn: (row) => (
+                <IconButton aria-label="delete" color="secondary" onClick={() => { openModalApproval(row) }}>
+                    <MdInfo color={'black'} />
                 </IconButton>
             ),
             mantineTableHeadCellProps: {
@@ -135,6 +199,7 @@ function Funnels() {
                 align: 'center',
             },
         },
+
 
     ];
 
@@ -218,8 +283,9 @@ function Funnels() {
                     </Box>
                 </Box>
             </div>
+            <ModalApproval open={visibilityModalApproval} id={selectedId} toogleOpenModalApproval={toogleOpenModalApproval} />
         </>
     )
 }
 
-export default Funnels
+export default ListFunnels

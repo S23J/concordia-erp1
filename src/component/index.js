@@ -1,3 +1,6 @@
 import NavbarComponent from "./Navbar";
+import { CustomList } from "./CustomListSidebar";
 
-export { NavbarComponent }
+export * from "./Modal"
+
+export { NavbarComponent, CustomList }

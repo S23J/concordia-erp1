@@ -78,7 +78,7 @@ function NavbarComponent() {
             },
             {
                 title: 'Data Funnels',
-                link: '#'
+                link: '/data-funnels'
             },
         ],
         sales: [
@@ -190,9 +190,7 @@ function NavbarComponent() {
                                 </ListItem>
                             </List>
                         </Grid>
-
                     </Grid>
-
                 </Box>
             </Drawer>
         </AppBar >

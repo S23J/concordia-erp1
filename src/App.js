@@ -11,12 +11,13 @@ import Funnels from "./pages/Sales/Funnels";
 import OrderRequest from "./pages/Sales/OrderRequest";
 import AddNewFunnels from "./pages/Sales/AddNewFunnels";
 import EditFunnels from "./pages/Sales/EditFunnels";
+import { ListFunnels } from "./pages";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={ <Login /> } />
+        <Route path="/" element={<Login />} />
         {/* <Route path="/home"
           element={
             <PrivateRouteComp >
@@ -42,6 +43,13 @@ function App() {
           element={
             <PrivateRouteComp >
               <Funnels />
+            </PrivateRouteComp>
+          }
+        />
+        <Route path="/data-funnels"
+          element={
+            <PrivateRouteComp >
+              <ListFunnels />
             </PrivateRouteComp>
           }
         />
