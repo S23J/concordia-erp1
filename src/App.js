@@ -19,6 +19,7 @@ import {
   SalesManagerHomePage
 } from "./pages";
 import { PrivateRouteComp } from "./auth";
+import AddNewOrderRequest from "./pages/Sales/AddNewOrderRequest";
 
 
 function App() {
@@ -79,6 +80,13 @@ function App() {
           element={
             <PrivateRouteComp >
               <OrderRequest />
+            </PrivateRouteComp>
+          }
+        />
+        <Route path="/tambah-order-request"
+          element={
+            <PrivateRouteComp >
+              <AddNewOrderRequest />
             </PrivateRouteComp>
           }
         />
