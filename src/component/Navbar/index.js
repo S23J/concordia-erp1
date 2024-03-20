@@ -1,15 +1,15 @@
 import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import AuthContext from '../../auth/Context/AuthContext';
 import axios from '../../API/axios';
 import { LogoGsk } from '../../assets';
 import { AppBar, Box, Collapse, Drawer, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar } from '@mui/material';
 import { MdMenu } from "react-icons/md";
-import { CustomList } from '../CustomListSidebar';
+import { CustomList } from '../CustomList';
 import { MdClose } from "react-icons/md";
 import { FaDatabase } from "react-icons/fa6";
 import { MdExpandLess, MdExpandMore } from "react-icons/md";
+import { AuthContext } from '../../auth';
 
 
 function NavbarComponent() {
@@ -93,7 +93,7 @@ function NavbarComponent() {
                         {open ? <MdExpandLess color='white' size={20} /> : <MdExpandMore color='white' size={20} />}
                     </ListItemButton>
                     <Collapse in={open} timeout="auto" unmountOnExit>
-                        <CustomList title={ 'Customer' } link={ '/customer' } disablePadding={ true } />
+                        <CustomList title={'Customer'} link={'/customer'} disablePadding={true} />
                     </Collapse>
 
                 </List>

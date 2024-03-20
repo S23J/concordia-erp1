@@ -1,105 +1,106 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../../../../auth';
-import { Box, Button, Container, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material';
+import {
+    Box,
+    Button,
+    Container,
+    FormControl,
+    Grid,
+    IconButton,
+    InputLabel,
+    MenuItem,
+    Select,
+    Stack,
+    TextField
+} from '@mui/material';
 import { IoIosAddCircleOutline } from 'react-icons/io';
-import { NavbarComponent } from '../../../../component';
+import {
+    ModalAddCategory,
+    ModalTambahAlamatBaru,
+    ModalUbahAlamat,
+    NavbarComponent,
+    RatingComponent
+} from '../../../../component';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../../../../API/axios';
 import Swal from 'sweetalert2';
 import { Field, Formik } from 'formik';
-import ModalAddCategory from '../../../../component/Modal/Admin/ModalAddCategory';
 import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
 import { Flex } from '@mantine/core';
 import { MdEdit } from 'react-icons/md';
 import { AiFillDelete } from 'react-icons/ai';
-import ModalTambahAlamatBaru from '../../../../component/Modal/Admin/ModalTambahAlamat';
-import ModalUbahAlamat from '../../../../component/Modal/Admin/ModalEditAlamat';
-import RatingComponent from '../../../../component/RatingComponent';
 
 
-function EditCustomer ()
-{
-    const { tokens } = useContext( AuthContext );
+
+function EditCustomer() {
+    const { tokens } = useContext(AuthContext);
     const { custid } = useParams();
-    const [ customerDetail, setCustomerDetail ] = useState( [] );
-    const [ customerAddress, setCustomerAddress ] = useState( [] )
     const navigate = useNavigate();
-    const [ listCategory, setListCategory ] = useState( [] );
-    const [ addCategory, setAddCategory ] = useState( false );
-    const handleAddCategory = () =>
-    {
-        setAddCategory( true );
+
+    const [customerDetail, setCustomerDetail] = useState([]);
+    const [customerAddress, setCustomerAddress] = useState([])
+    const [ratingValue, setRatingValue] = useState(0);
+
+    const [listCategory, setListCategory] = useState([]);
+    const [addCategory, setAddCategory] = useState(false);
+    const handleAddCategory = () => {
+        setAddCategory(true);
     }
-    const [ openModalAddress, setOpenModalAddress ] = useState( false );
-    const handleOpen = () =>
-    {
-        setOpenModalAddress( true );
+    const [openModalAddress, setOpenModalAddress] = useState(false);
+    const handleOpen = () => {
+        setOpenModalAddress(true);
     }
-    const [ modalUbahAlamat, setModalUbahAlamat ] = useState( false );
-    const [ idSelected, setIdSelected ] = useState();
-    const handleOpenUbahAlamat = ( row ) =>
-    {
-        setIdSelected( row.id )
-        setModalUbahAlamat( true );
+    const [modalUbahAlamat, setModalUbahAlamat] = useState(false);
+    const [idSelected, setIdSelected] = useState();
+    const handleOpenUbahAlamat = (row) => {
+        setIdSelected(row.id)
+        setModalUbahAlamat(true);
     }
-    const handleBack = () =>
-    {
-        navigate( -1 )
+    const handleBack = () => {
+        navigate(-1)
     }
-    const [ customerCategory, setCustomerCategory ] = useState( '' );
+    const [customerCategory, setCustomerCategory] = useState('');
     // Adjust the handleChangePrice function to set the numeric value in state
-    function handleChangePrice ( e, setFieldValue )
-    {
+    function handleChangePrice(e, setFieldValue) {
         const inputValue = e.target.value;
-        const numericValue = parseFloat( inputValue.replace( /[^\d]/g, '' ) ) || 0;
+        const numericValue = parseFloat(inputValue.replace(/[^\d]/g, '')) || 0;
         // Store the numeric value in form state
-        setFieldValue( 'credit_limit', numericValue );
+        setFieldValue('credit_limit', numericValue);
     }
 
-    const handleChangeCreditScore = ( e, setFieldValue ) =>
-    {
-        const value = e.target.value;
-        if ( value === '' || ( parseInt( value ) >= 1 && parseInt( value ) <= 5 ) ) {
-            setFieldValue( 'credit_score', value );
-        }
-    };
-    const [ ratingValue, setRatingValue ] = useState( 0 );
 
-    const fetchFunnelsDataDetail = () =>
-    {
-        axios.get( `/api/v1/core/customers/${custid}`, {
+
+
+    const fetchFunnelsDataDetail = () => {
+        axios.get(`/api/v1/core/customers/${custid}`, {
             headers: {
                 withCredentials: true,
                 Authorization: `Token ${tokens?.token}`,
             },
-        } )
-            .then( res =>
-            {
+        })
+            .then(res => {
 
-                setCustomerDetail( res.data );
-                setCustomerCategory( res.data.category );
-                setRatingValue( res.data.credit_score );
+                setCustomerDetail(res.data);
+                setCustomerCategory(res.data.category);
+                setRatingValue(res.data.credit_score);
                 // console.log( res.data )
-            } )
-            .catch( err =>
-            {
-                console.log( err );
-            } );
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 
-    useEffect( () =>
-    {
-        if ( custid !== undefined ) {
+    useEffect(() => {
+        if (custid !== undefined) {
             fetchFunnelsDataDetail();
-        } else if ( tokens?.token !== undefined ) {
+        } else if (tokens?.token !== undefined) {
             fetchFunnelsDataDetail();
         }
-    }, [ custid, tokens?.token ] );
+    }, [custid, tokens?.token]);
 
 
-    const fetchListCategory = () =>
-    {
-        axios.get( `/api/v1/core/custcategories/`,
+    const fetchListCategory = () => {
+        axios.get(`/api/v1/core/custcategories/`,
             {
                 headers:
                 {
@@ -107,32 +108,28 @@ function EditCustomer ()
                     Authorization: `Token ${tokens?.token}`,
                 },
 
-            } )
-            .then( res =>
-            {
+            })
+            .then(res => {
 
-                setListCategory( res.data );
+                setListCategory(res.data);
                 // console.log( res.data )
 
-            } ).catch( err =>
-            {
+            }).catch(err => {
 
 
-                ( console.log( err ) )
-            } )
+                (console.log(err))
+            })
     }
 
-    useEffect( () =>
-    {
+    useEffect(() => {
 
-        if ( tokens?.token != null ) fetchListCategory()
+        if (tokens?.token != null) fetchListCategory()
 
-    }, [ tokens?.token ] );
+    }, [tokens?.token]);
 
 
-    const fetchListCustomerAddress = () =>
-    {
-        axios.get( `/api/v1/core/custaddresses/`,
+    const fetchListCustomerAddress = () => {
+        axios.get(`/api/v1/core/custaddresses/`,
             {
                 headers:
                 {
@@ -140,66 +137,62 @@ function EditCustomer ()
                     Authorization: `Token ${tokens?.token}`,
                 },
 
-            } )
-            .then( res =>
-            {
+            })
+            .then(res => {
 
-                const filteredData = res.data.filter( item => item.customer === customerDetail.id );
-                setCustomerAddress( filteredData );
-
-
-            } ).catch( err =>
-            {
+                const filteredData = res.data.filter(item => item.customer === customerDetail.id);
+                setCustomerAddress(filteredData);
 
 
-                ( console.log( err ) )
-            } )
+            }).catch(err => {
+
+
+                (console.log(err))
+            })
     }
 
-    useEffect( () =>
-    {
+    useEffect(() => {
 
-        if ( customerDetail.id !== undefined ) {
+        if (customerDetail.id !== undefined) {
             fetchListCustomerAddress();
-        } else if ( tokens?.token !== undefined ) {
+        } else if (tokens?.token !== undefined) {
             fetchListCustomerAddress();
         }
-    }, [ customerDetail.id, tokens?.token ] );
+    }, [customerDetail.id, tokens?.token]);
 
 
 
-    const handleDelete = async ( rowId ) =>
-    {
-        const result = await Swal.fire( {
+    const handleDelete = async (rowId) => {
+        const result = await Swal.fire({
             title: 'Apakah anda yakin ingin menghapus alamat ini?',
             text: 'Anda tidak dapat mengembalikan alamat ini!',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Ya, hapus alamat',
             cancelButtonText: 'Batalkan',
-        } );
+        });
 
 
-        if ( result.isConfirmed ) {
+        if (result.isConfirmed) {
             try {
 
-                const responseDelete = await axios.delete( `/api/v1/core/custaddresses/${rowId}/`, {
+                const responseDelete = await axios.delete(`/api/v1/core/custaddresses/${rowId}/`, {
                     headers: {
                         'Access-Control-Allow-Origin': '*',
                         withCredentials: true,
                     },
-                } );
+                });
                 fetchListCustomerAddress();
                 // console.log( responseDelete )
-                Swal.fire( 'Terhapus!', '', 'success' );
+                Swal.fire('Terhapus!', '', 'success');
 
-            } catch ( err ) {
-                console.log( err );
-                Swal.fire( 'Error', 'Terjadi kesalahan saat menghapus!', 'error' );
+            } catch (err) {
+                console.log(err);
+                Swal.fire('Error', 'Terjadi kesalahan saat menghapus!', 'error');
 
             }
         } else {
-            Swal.fire( 'Dibatalkan', '', 'info' );
+            Swal.fire('Dibatalkan', '', 'info');
         }
     };
 
@@ -211,9 +204,8 @@ function EditCustomer ()
             header: 'Tipe Alamat',
             accessorFn: row => (
                 <>
-                    { ( () =>
-                    {
-                        switch ( row?.address_type ) {
+                    {(() => {
+                        switch (row?.address_type) {
                             case 'OF':
                                 return <span >Alamat Kantor</span>;
                             case 'BL':
@@ -223,7 +215,7 @@ function EditCustomer ()
                             default:
                                 return null;
                         }
-                    } )() }
+                    })()}
                 </>
             ),
             mantineTableHeadCellProps: {
@@ -255,8 +247,8 @@ function EditCustomer ()
         },
         {
             header: 'Ubah',
-            accessorFn: ( row ) => (
-                <IconButton aria-label="edit" color="secondary" onClick={ () => { handleOpenUbahAlamat( row ) } } >
+            accessorFn: (row) => (
+                <IconButton aria-label="edit" color="secondary" onClick={() => { handleOpenUbahAlamat(row) }} >
                     <MdEdit />
                 </IconButton>
             ),
@@ -269,8 +261,8 @@ function EditCustomer ()
         },
         {
             header: 'Hapus',
-            accessorFn: ( row ) => (
-                <IconButton aria-label="delete" color="error" onClick={ () => handleDelete( row.id ) } >
+            accessorFn: (row) => (
+                <IconButton aria-label="delete" color="error" onClick={() => handleDelete(row.id)} >
                     <AiFillDelete />
                 </IconButton>
             ),
@@ -287,7 +279,7 @@ function EditCustomer ()
     const columns = getColumns();
 
 
-    const table = useMantineReactTable( {
+    const table = useMantineReactTable({
         columns,
         enableDensityToggle: false,
         initialState: { density: 'xs' },
@@ -301,25 +293,25 @@ function EditCustomer ()
             striped: true,
 
         },
-        renderTopToolbarCustomActions: ( { table } ) => (
+        renderTopToolbarCustomActions: ({ table }) => (
             <Box
-                sx={ {
+                sx={{
                     display: 'flex',
                     gap: '16px',
                     padding: '8px',
                     flexWrap: 'wrap',
-                } }
+                }}
             >
-                <p style={ { fontFamily: 'Poppins-Medium' } }>
+                <p style={{ fontFamily: 'Poppins-Medium' }}>
                     Daftar Alamat Perusahaan
                 </p>
             </Box>
         ),
-        renderToolbarInternalActions: ( { table } ) => (
+        renderToolbarInternalActions: ({ table }) => (
             <Flex gap="xs" align="center">
-                {/* add custom button to print table  */ }
+                {/* add custom button to print table  */}
                 <Button
-                    onClick={ handleOpen }
+                    onClick={handleOpen}
                     variant="contained"
                     id='tabelButton'
                 >
@@ -327,7 +319,7 @@ function EditCustomer ()
                 </Button>
             </Flex>
         ),
-    } );
+    });
 
 
     const defaultValue = {
@@ -338,7 +330,7 @@ function EditCustomer ()
         mobile: customerDetail?.mobile || '',
         npwp: customerDetail?.npwp || '',
         field: customerDetail?.field || '',
-        credit_limit: parseFloat( customerDetail?.credit_limit ) || 0,
+        credit_limit: parseFloat(customerDetail?.credit_limit) || 0,
         credit_score: customerDetail?.credit_score || '',
         top: customerDetail?.top || '',
         category: customerCategory || '',
@@ -346,8 +338,7 @@ function EditCustomer ()
     };
 
 
-    const handleEditCustomer = async ( values ) =>
-    {
+    const handleEditCustomer = async (values) => {
         // console.log( values )
         const finalData = {
             ...values,
@@ -355,7 +346,7 @@ function EditCustomer ()
         }
 
         try {
-            const response = await axios.patch( `/api/v1/core/customers/${custid}/`, finalData,
+            const response = await axios.patch(`/api/v1/core/customers/${custid}/`, finalData,
                 {
                     headers: {
                         'Access-Control-Allow-Origin': '*',
@@ -366,211 +357,210 @@ function EditCustomer ()
             );
 
             // console.log( response );
-            Swal.fire( {
+            Swal.fire({
                 icon: 'success',
                 title: 'Customer berhasil diubah',
                 showConfirmButton: false,
                 timer: 2000
-            } )
-            navigate( '/customer' );
-        } catch ( err ) {
-            console.log( err )
+            })
+            navigate('/customer');
+        } catch (err) {
+            console.log(err)
 
-            Swal.fire( {
+            Swal.fire({
                 icon: 'error',
                 title: 'Warning!',
                 text: 'Something is wrong',
-            } )
+            })
         }
     }
 
     return (
         <>
             <NavbarComponent />
-            <Container style={ { minWidth: '90%' } } >
+            <Container style={{ minWidth: '90%' }} >
                 <Formik
-                    initialValues={ defaultValue }
-                    enableReinitialize={ true }
-                    onSubmit={ handleEditCustomer }
+                    initialValues={defaultValue}
+                    enableReinitialize={true}
+                    onSubmit={handleEditCustomer}
                 >
-                    { ( {
+                    {({
                         handleSubmit,
                         handleChange,
                         values,
                         setFieldValue
-                    } ) => (
-                        <form onSubmit={ handleSubmit } autoComplete='off'>
-                            <Grid container spacing={ 3 } >
-                                <Grid item md={ 12 } xs={ 12 } marginY={ 5 } >
-                                    <h2 style={ { fontFamily: 'Poppins-Regular', textAlign: 'center' } }>
+                    }) => (
+                        <form onSubmit={handleSubmit} autoComplete='off'>
+                            <Grid container spacing={3} >
+                                <Grid item md={12} xs={12} marginY={5} >
+                                    <h2 style={{ fontFamily: 'Poppins-Regular', textAlign: 'center' }}>
                                         Data Perusahaan
                                     </h2>
                                 </Grid>
                             </Grid>
-                            <Grid container spacing={ 3 }>
-                                <Grid item xs={ 12 } md={ 4 }>
+                            <Grid container spacing={3}>
+                                <Grid item xs={12} md={4}>
                                     <TextField
                                         id="name"
                                         fullWidth
                                         required
                                         label="Nama Perusahaan"
-                                        value={ values.name }
-                                        onChange={ handleChange( "name" ) }
+                                        value={values.name}
+                                        onChange={handleChange("name")}
                                         variant="outlined"
-                                        sx={ styleForm }
+                                        sx={styleForm}
                                     />
                                 </Grid>
-                                <Grid item xs={ 12 } md={ 4 }>
+                                <Grid item xs={12} md={4}>
                                     <TextField
                                         id="pic"
                                         fullWidth
                                         required
                                         label="Nama Personal Kontak"
-                                        value={ values.pic }
-                                        onChange={ handleChange( "pic" ) }
+                                        value={values.pic}
+                                        onChange={handleChange("pic")}
                                         variant="outlined"
-                                        sx={ styleForm }
+                                        sx={styleForm}
                                     />
                                 </Grid>
-                                <Grid item xs={ 12 } md={ 4 }>
+                                <Grid item xs={12} md={4}>
                                     <TextField
                                         id="phone"
                                         fullWidth
                                         required
                                         label="No. Telp Perusahaan"
-                                        value={ values.phone }
-                                        onChange={ handleChange( "phone" ) }
+                                        value={values.phone}
+                                        onChange={handleChange("phone")}
                                         variant="outlined"
-                                        sx={ styleForm }
+                                        sx={styleForm}
                                     />
                                 </Grid>
-                                <Grid item xs={ 12 } md={ 4 }>
+                                <Grid item xs={12} md={4}>
                                     <TextField
                                         id="email"
                                         fullWidth
                                         required
                                         label="Email Perusahaan"
-                                        value={ values.email }
-                                        onChange={ handleChange( "email" ) }
+                                        value={values.email}
+                                        onChange={handleChange("email")}
                                         variant="outlined"
-                                        sx={ styleForm }
+                                        sx={styleForm}
                                     />
                                 </Grid>
-                                <Grid item xs={ 12 } md={ 4 }>
-                                    <Stack spacing={ 2 } direction="row">
-                                        <FormControl fullWidth sx={ styleForm }>
+                                <Grid item xs={12} md={4}>
+                                    <Stack spacing={2} direction="row">
+                                        <FormControl fullWidth sx={styleForm}>
                                             <InputLabel id="demo-simple-select-label">Kategori Perusahaan *</InputLabel>
                                             <Select
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
-                                                value={ values.category || '' } // Ensure that the value is always defined
+                                                value={values.category || ''} // Ensure that the value is always defined
                                                 label="Customer Category"
                                                 required
-                                                onChange={ ( e ) =>
-                                                {
-                                                    setFieldValue( "category", e.target.value );
-                                                } }
-                                                sx={ {
+                                                onChange={(e) => {
+                                                    setFieldValue("category", e.target.value);
+                                                }}
+                                                sx={{
                                                     '& .MuiSelect-select.MuiSelect-select': {
                                                         fontFamily: 'Poppins-Light',
                                                         fontSize: '16px',
                                                     },
-                                                } }
+                                                }}
                                             >
-                                                { listCategory.map( ( data ) => (
-                                                    <MenuItem key={ data.id } value={ data.id } sx={ selectFormValue }>
-                                                        { data.name }
+                                                {listCategory.map((data) => (
+                                                    <MenuItem key={data.id} value={data.id} sx={selectFormValue}>
+                                                        {data.name}
                                                     </MenuItem>
-                                                ) ) }
+                                                ))}
                                             </Select>
                                         </FormControl>
-                                        <Button variant='contained' style={ { minHeight: '50px' } } onClick={ handleAddCategory }>
-                                            <IoIosAddCircleOutline size={ 30 } />
+                                        <Button variant='contained' style={{ minHeight: '50px' }} onClick={handleAddCategory}>
+                                            <IoIosAddCircleOutline size={30} />
                                         </Button>
                                     </Stack>
                                 </Grid>
-                                <Grid item xs={ 12 } md={ 4 }>
+                                <Grid item xs={12} md={4}>
                                     <TextField
                                         id="mobile"
                                         fullWidth
                                         required
                                         label="No. Hp Personal Kontak"
-                                        value={ values.mobile }
-                                        onChange={ handleChange( "mobile" ) }
+                                        value={values.mobile}
+                                        onChange={handleChange("mobile")}
                                         variant="outlined"
-                                        sx={ styleForm }
+                                        sx={styleForm}
                                     />
                                 </Grid>
-                                <Grid item xs={ 12 } md={ 4 }>
+                                <Grid item xs={12} md={4}>
                                     <TextField
                                         id="npwp"
                                         fullWidth
                                         required
                                         label="NPWP Perusahaan"
-                                        value={ values.npwp }
-                                        onChange={ handleChange( "npwp" ) }
+                                        value={values.npwp}
+                                        onChange={handleChange("npwp")}
                                         variant="outlined"
-                                        sx={ styleForm }
+                                        sx={styleForm}
                                     />
                                 </Grid>
-                                <Grid item xs={ 12 } md={ 4 }>
+                                <Grid item xs={12} md={4}>
                                     <TextField
                                         id="field"
                                         fullWidth
                                         required
                                         label="Bidang Industri Perusahaan"
-                                        value={ values.field }
-                                        onChange={ handleChange( "field" ) }
+                                        value={values.field}
+                                        onChange={handleChange("field")}
                                         variant="outlined"
-                                        sx={ styleForm }
+                                        sx={styleForm}
                                     />
                                 </Grid>
-                                <Grid item xs={ 12 } md={ 4 }>
+                                <Grid item xs={12} md={4}>
                                     <Field name="credit_limit">
-                                        { ( { field } ) => (
+                                        {({ field }) => (
                                             <TextField
-                                                { ...field }
+                                                {...field}
                                                 id="credit_limit"
                                                 fullWidth
                                                 required
                                                 type='text'
                                                 label="Batas Kredit Pelanggan"
                                                 variant="outlined"
-                                                value={ `Rp ${values.credit_limit.toLocaleString()}` } // Display formatted value
-                                                onChange={ ( e ) => handleChangePrice( e, setFieldValue ) }
-                                                sx={ styleForm }
+                                                value={`Rp ${values.credit_limit.toLocaleString()}`} // Display formatted value
+                                                onChange={(e) => handleChangePrice(e, setFieldValue)}
+                                                sx={styleForm}
                                             />
-                                        ) }
+                                        )}
                                     </Field>
                                 </Grid>
-                                <Grid item xs={ 12 } md={ 4 }>
+                                <Grid item xs={12} md={4}>
                                     <TextField
                                         id="customerTop"
                                         type='number'
                                         fullWidth
                                         label="Jangka Waktu Pembayaran Pelanggan"
                                         required
-                                        value={ values.top }
-                                        onChange={ handleChange( "top" ) }
+                                        value={values.top}
+                                        onChange={handleChange("top")}
                                         variant="outlined"
-                                        sx={ styleForm }
+                                        sx={styleForm}
                                     />
                                 </Grid>
-                                <Grid item xs={ 12 } md={ 4 } style={ { display: 'flex', alignItems: 'center' } }>
-                                    <RatingComponent ratingValue={ ratingValue } setRatingValue={ setRatingValue } />
+                                <Grid item xs={12} md={4} style={{ display: 'flex', alignItems: 'center' }}>
+                                    <RatingComponent ratingValue={ratingValue} setRatingValue={setRatingValue} />
                                 </Grid>
                             </Grid>
                             <div>
-                                <Box sx={ { overflow: "auto" } } marginTop={ 5 }>
-                                    <Box sx={ { width: "100%", display: "table", tableLayout: "fixed" } }>
+                                <Box sx={{ overflow: "auto" }} marginTop={5}>
+                                    <Box sx={{ width: "100%", display: "table", tableLayout: "fixed" }}>
                                         <MantineReactTable
-                                            table={ table }
+                                            table={table}
                                         />
                                     </Box>
                                 </Box>
                             </div>
                             <div>
-                                <Stack spacing={ 2 } direction="row" marginY={ 3 }>
+                                <Stack spacing={2} direction="row" marginY={3}>
                                     <Button
                                         type="submit"
                                         variant='contained'
@@ -580,35 +570,35 @@ function EditCustomer ()
                                     </Button>
                                     <Button
                                         variant='contained'
-                                        onClick={ handleBack }
+                                        onClick={handleBack}
                                         id='tabelButton'
-                                        style={ { backgroundColor: 'gray' } }
+                                        style={{ backgroundColor: 'gray' }}
                                     >
                                         Kembali
                                     </Button>
                                 </Stack>
                             </div>
                         </form>
-                    ) }
+                    )}
                 </Formik>
             </Container>
             <ModalTambahAlamatBaru
-                openModalAddress={ openModalAddress }
-                setOpenModalAddress={ setOpenModalAddress }
-                custid={ custid }
-                fetchListCustomerAddress={ fetchListCustomerAddress }
+                openModalAddress={openModalAddress}
+                setOpenModalAddress={setOpenModalAddress}
+                custid={custid}
+                fetchListCustomerAddress={fetchListCustomerAddress}
 
             />
             <ModalUbahAlamat
-                modalUbahAlamat={ modalUbahAlamat }
-                setModalUbahAlamat={ setModalUbahAlamat }
-                fetchListCustomerAddress={ fetchListCustomerAddress }
-                idSelected={ idSelected }
+                modalUbahAlamat={modalUbahAlamat}
+                setModalUbahAlamat={setModalUbahAlamat}
+                fetchListCustomerAddress={fetchListCustomerAddress}
+                idSelected={idSelected}
             />
             <ModalAddCategory
-                addCategory={ addCategory }
-                setAddCategory={ setAddCategory }
-                fetchListCategory={ fetchListCategory }
+                addCategory={addCategory}
+                setAddCategory={setAddCategory}
+                fetchListCategory={fetchListCategory}
             />
         </>
     )

@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Grid, IconButton } from '@mui/material';
+import { Box, Grid, IconButton } from '@mui/material';
 import { AuthContext } from '../../../auth';
 import axios from '../../../API/axios';
 import Swal from 'sweetalert2';
 import { MdInfo } from "react-icons/md";
 import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
 import { ModalApproval, NavbarComponent } from '../../../component';
+import { numberFormat } from '../../../utils';
 
 
 function ListFunnels() {
@@ -15,9 +16,6 @@ function ListFunnels() {
     const [visibilityModalApproval, setVisibilityModalApproval] = useState(false);
     const [selectedId, setSelectedId] = useState()
     const navigate = useNavigate();
-    const handleAddFunnels = () => {
-        navigate('/tambah-funnels');
-    }
 
     const toogleOpenModalApproval = () => {
         setVisibilityModalApproval(!visibilityModalApproval)
@@ -27,11 +25,7 @@ function ListFunnels() {
         setSelectedId(row.id)
         toogleOpenModalApproval()
     }
-    const numberFormat = (value) =>
-        new Intl.NumberFormat('IN-ID', {
-            style: 'currency',
-            currency: 'IDR'
-        }).format(value);
+
 
     const fetchListFunnels = () => {
         axios.get(`/api/v1/crm/funnels/`,
@@ -161,9 +155,7 @@ function ListFunnels() {
         {
             header: 'Grand Total',
             accessorFn: row => (
-
                 `${numberFormat(row.grand_total)}`
-
             ),
             mantineTableHeadCellProps: {
                 align: 'center',
@@ -212,8 +204,6 @@ function ListFunnels() {
         enableDensityToggle: false,
         initialState: { density: 'xs' },
         data: listFunnels,
-        // enableRowNumbers: true,
-        // rowNumberMode: 'static',
         enableGlobalFilter: false,
         enableColumnResizing: false,
         isMultiSortEvent: () => true,

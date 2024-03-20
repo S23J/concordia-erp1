@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import NavbarComponent from '../../../component/Navbar'
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, Grid, IconButton } from '@mui/material';
 import { AuthContext } from '../../../auth';
@@ -7,6 +6,8 @@ import axios from '../../../API/axios';
 import Swal from 'sweetalert2';
 import { MdEdit } from "react-icons/md";
 import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
+import { numberFormat } from '../../../utils';
+import { NavbarComponent } from '../../../component';
 
 
 function Funnels() {
@@ -19,11 +20,7 @@ function Funnels() {
     const editFunnels = (row) => {
         navigate("/edit-funnels/" + row.id)
     }
-    const numberFormat = (value) =>
-        new Intl.NumberFormat('IN-ID', {
-            style: 'currency',
-            currency: 'IDR'
-        }).format(value);
+
 
     const fetchListFunnels = () => {
         axios.get(`/api/v1/crm/funnels/`,
@@ -210,7 +207,7 @@ function Funnels() {
 
             </div>
             <div>
-                <Box sx={ { overflow: "auto" } } marginY={ 5 } marginX={ 3 }>
+                <Box sx={{ overflow: "auto" }} marginY={5} marginX={3}>
                     <Box sx={{ width: "100%", display: "table", tableLayout: "fixed" }}>
                         <MantineReactTable
                             table={table}
