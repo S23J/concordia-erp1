@@ -224,9 +224,9 @@ function EditFunnels ()
         {
             header: 'Harga',
             accessorFn: row => (
-                <p>
+                <>
                     { numberFormat( row.price ) }
-                </p>
+                </>
             ),
             mantineTableHeadCellProps: {
                 align: 'center',
@@ -238,9 +238,9 @@ function EditFunnels ()
         {
             header: 'Sub Total',
             accessorFn: row => (
-                <p>
+                <>
                     { numberFormat( row.subtotal ) }
-                </p>
+                </>
             ),
             mantineTableHeadCellProps: {
                 align: 'center',
@@ -250,7 +250,7 @@ function EditFunnels ()
             },
         },
         {
-            header: 'Edit',
+            header: 'Ubah',
             accessorFn: ( row ) => (
                 <IconButton aria-label="edit" color="secondary" onClick={ () => handleEdit( row ) }>
                     <MdEdit />
@@ -422,7 +422,7 @@ function EditFunnels ()
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid item md={ 4 } xs={ 12 } spacing={ 3 }>
+                                    <Grid item md={ 4 } xs={ 12 }>
                                 <Grid container spacing={ 3 } marginBottom={ 3 }> {/* Add spacing between grid items and set marginBottom */ }
                                     <Grid item md={ 12 } xs={ 12 }>
                                         <TextField

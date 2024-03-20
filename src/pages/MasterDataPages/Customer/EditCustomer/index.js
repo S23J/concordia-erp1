@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../../../../auth';
-import { Button, Container, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material';
+import { Box, Button, Container, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import { NavbarComponent } from '../../../../component';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,18 +8,38 @@ import axios from '../../../../API/axios';
 import Swal from 'sweetalert2';
 import { Field, Formik } from 'formik';
 import ModalAddCategory from '../../../../component/Modal/Admin/ModalAddCategory';
+import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
+import { Flex } from '@mantine/core';
+import { MdEdit } from 'react-icons/md';
+import { AiFillDelete } from 'react-icons/ai';
+import ModalTambahAlamatBaru from '../../../../component/Modal/Admin/ModalTambahAlamat';
+import ModalUbahAlamat from '../../../../component/Modal/Admin/ModalEditAlamat';
+
 
 function EditCustomer ()
 {
     const { tokens } = useContext( AuthContext );
     const { custid } = useParams();
     const [ customerDetail, setCustomerDetail ] = useState( [] );
+    const [ customerAddress, setCustomerAddress ] = useState( [] )
     const navigate = useNavigate();
     const [ listCategory, setListCategory ] = useState( [] );
     const [ addCategory, setAddCategory ] = useState( false );
     const handleAddCategory = () =>
     {
         setAddCategory( true );
+    }
+    const [ openModalAddress, setOpenModalAddress ] = useState( false );
+    const handleOpen = () =>
+    {
+        setOpenModalAddress( true );
+    }
+    const [ modalUbahAlamat, setModalUbahAlamat ] = useState( false );
+    const [ idSelected, setIdSelected ] = useState();
+    const handleOpenUbahAlamat = ( row ) =>
+    {
+        setIdSelected( row.id )
+        setModalUbahAlamat( true );
     }
     const handleBack = () =>
     {
@@ -108,6 +128,206 @@ function EditCustomer ()
     }, [ tokens?.token ] );
 
 
+    const fetchListCustomerAddress = () =>
+    {
+        axios.get( `/api/v1/core/custaddresses/`,
+            {
+                headers:
+                {
+                    withCredentials: true,
+                    Authorization: `Token ${tokens?.token}`,
+                },
+
+            } )
+            .then( res =>
+            {
+
+                const filteredData = res.data.filter( item => item.customer === customerDetail.id );
+                setCustomerAddress( filteredData );
+
+
+            } ).catch( err =>
+            {
+
+
+                ( console.log( err ) )
+            } )
+    }
+
+    useEffect( () =>
+    {
+
+        if ( customerDetail.id !== undefined ) {
+            fetchListCustomerAddress();
+        } else if ( tokens?.token !== undefined ) {
+            fetchListCustomerAddress();
+        }
+    }, [ customerDetail.id, tokens?.token ] );
+
+
+
+    const handleDelete = async ( rowId ) =>
+    {
+        const result = await Swal.fire( {
+            title: 'Apakah anda yakin ingin menghapus alamat ini?',
+            text: 'Anda tidak dapat mengembalikan alamat ini!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, hapus alamat',
+            cancelButtonText: 'Batalkan',
+        } );
+
+
+        if ( result.isConfirmed ) {
+            try {
+
+                const responseDelete = await axios.delete( `/api/v1/core/custaddresses/${rowId}/`, {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        withCredentials: true,
+                    },
+                } );
+                fetchListCustomerAddress();
+                // console.log( responseDelete )
+                Swal.fire( 'Terhapus!', '', 'success' );
+
+            } catch ( err ) {
+                console.log( err );
+                Swal.fire( 'Error', 'Terjadi kesalahan saat menghapus!', 'error' );
+
+            }
+        } else {
+            Swal.fire( 'Dibatalkan', '', 'info' );
+        }
+    };
+
+
+
+
+    const getColumns = () => [
+        {
+            header: 'Tipe Alamat',
+            accessorFn: row => (
+                <>
+                    { ( () =>
+                    {
+                        switch ( row?.address_type ) {
+                            case 'OF':
+                                return <span >Alamat Kantor</span>;
+                            case 'BL':
+                                return <span >Alamat Pengiriman</span>;
+                            case 'DV':
+                                return <span >Alamat Penagihan</span>;
+                            default:
+                                return null;
+                        }
+                    } )() }
+                </>
+            ),
+            mantineTableHeadCellProps: {
+                align: 'center',
+            },
+            mantineTableBodyCellProps: {
+                align: 'center',
+            },
+        },
+        {
+            header: 'Kota',
+            accessorKey: 'city',
+            mantineTableHeadCellProps: {
+                align: 'center',
+            },
+            mantineTableBodyCellProps: {
+                align: 'center',
+            },
+        },
+        {
+            header: 'Kode Pos',
+            accessorKey: 'zip_code',
+            mantineTableHeadCellProps: {
+                align: 'center',
+            },
+            mantineTableBodyCellProps: {
+                align: 'center',
+            },
+        },
+        {
+            header: 'Ubah',
+            accessorFn: ( row ) => (
+                <IconButton aria-label="edit" color="secondary" onClick={ () => { handleOpenUbahAlamat( row ) } } >
+                    <MdEdit />
+                </IconButton>
+            ),
+            mantineTableHeadCellProps: {
+                align: 'center',
+            },
+            mantineTableBodyCellProps: {
+                align: 'center',
+            },
+        },
+        {
+            header: 'Hapus',
+            accessorFn: ( row ) => (
+                <IconButton aria-label="delete" color="error" onClick={ () => handleDelete( row.id ) } >
+                    <AiFillDelete />
+                </IconButton>
+            ),
+            mantineTableHeadCellProps: {
+                align: 'center',
+            },
+            mantineTableBodyCellProps: {
+                align: 'center',
+            },
+        },
+
+    ];
+
+    const columns = getColumns();
+
+
+    const table = useMantineReactTable( {
+        columns,
+        enableDensityToggle: false,
+        initialState: { density: 'xs' },
+        data: customerAddress,
+        enableRowNumbers: true,
+        rowNumberMode: 'static',
+        enableGlobalFilter: false,
+        enableColumnResizing: false,
+        isMultiSortEvent: () => true,
+        mantineTableProps: {
+            striped: true,
+
+        },
+        renderTopToolbarCustomActions: ( { table } ) => (
+            <Box
+                sx={ {
+                    display: 'flex',
+                    gap: '16px',
+                    padding: '8px',
+                    flexWrap: 'wrap',
+                } }
+            >
+                <p style={ { fontFamily: 'Poppins-Medium' } }>
+                    Daftar Alamat Perusahaan
+                </p>
+            </Box>
+        ),
+        renderToolbarInternalActions: ( { table } ) => (
+            <Flex gap="xs" align="center">
+                {/* add custom button to print table  */ }
+                <Button
+                    onClick={ handleOpen }
+                    variant="contained"
+                    id='tabelButton'
+                >
+                    Tambah Alamat
+                </Button>
+            </Flex>
+        ),
+    } );
+
+
     const defaultValue = {
         name: customerDetail?.name || '',
         pic: customerDetail?.pic || '',
@@ -176,7 +396,7 @@ function EditCustomer ()
                             <Grid container spacing={ 3 } >
                                 <Grid item md={ 12 } xs={ 12 } marginY={ 5 } >
                                     <h2 style={ { fontFamily: 'Poppins-Regular', textAlign: 'center' } }>
-                                        Tambah Customer
+                                        Data Perusahaan
                                     </h2>
                                 </Grid>
                             </Grid>
@@ -186,7 +406,7 @@ function EditCustomer ()
                                         id="name"
                                         fullWidth
                                         required
-                                        label="Customer Name"
+                                        label="Nama Perusahaan"
                                         value={ values.name }
                                         onChange={ handleChange( "name" ) }
                                         variant="outlined"
@@ -198,7 +418,7 @@ function EditCustomer ()
                                         id="pic"
                                         fullWidth
                                         required
-                                        label="Customer PIC"
+                                        label="Nama Personal Kontak"
                                         value={ values.pic }
                                         onChange={ handleChange( "pic" ) }
                                         variant="outlined"
@@ -206,27 +426,33 @@ function EditCustomer ()
                                     />
                                 </Grid>
                                 <Grid item xs={ 12 } md={ 4 }>
-                                    <Field name="credit_limit">
-                                        { ( { field } ) => (
-                                            <TextField
-                                                { ...field }
-                                                id="credit_limit"
-                                                fullWidth
-                                                required
-                                                type='text'
-                                                label="Customer Credit Limit"
-                                                variant="outlined"
-                                                value={ `Rp ${values.credit_limit.toLocaleString()}` } // Display formatted value
-                                                onChange={ ( e ) => handleChangePrice( e, setFieldValue ) }
-                                                sx={ styleForm }
-                                            />
-                                        ) }
-                                    </Field>
+                                    <TextField
+                                        id="phone"
+                                        fullWidth
+                                        required
+                                        label="No. Telp Perusahaan"
+                                        value={ values.phone }
+                                        onChange={ handleChange( "phone" ) }
+                                        variant="outlined"
+                                        sx={ styleForm }
+                                    />
+                                </Grid>
+                                <Grid item xs={ 12 } md={ 4 }>
+                                    <TextField
+                                        id="email"
+                                        fullWidth
+                                        required
+                                        label="Email Perusahaan"
+                                        value={ values.email }
+                                        onChange={ handleChange( "email" ) }
+                                        variant="outlined"
+                                        sx={ styleForm }
+                                    />
                                 </Grid>
                                 <Grid item xs={ 12 } md={ 4 }>
                                     <Stack spacing={ 2 } direction="row">
                                         <FormControl fullWidth sx={ styleForm }>
-                                            <InputLabel id="demo-simple-select-label">Customer Category</InputLabel>
+                                            <InputLabel id="demo-simple-select-label">Kategori Perusahaan *</InputLabel>
                                             <Select
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
@@ -261,12 +487,54 @@ function EditCustomer ()
                                         id="mobile"
                                         fullWidth
                                         required
-                                        label="Customer Mobile Phone"
+                                        label="No. Hp Personal Kontak"
                                         value={ values.mobile }
                                         onChange={ handleChange( "mobile" ) }
                                         variant="outlined"
                                         sx={ styleForm }
                                     />
+                                </Grid>
+                                <Grid item xs={ 12 } md={ 4 }>
+                                    <TextField
+                                        id="npwp"
+                                        fullWidth
+                                        required
+                                        label="NPWP Perusahaan"
+                                        value={ values.npwp }
+                                        onChange={ handleChange( "npwp" ) }
+                                        variant="outlined"
+                                        sx={ styleForm }
+                                    />
+                                </Grid>
+                                <Grid item xs={ 12 } md={ 4 }>
+                                    <TextField
+                                        id="field"
+                                        fullWidth
+                                        required
+                                        label="Bidang Industri Perusahaan"
+                                        value={ values.field }
+                                        onChange={ handleChange( "field" ) }
+                                        variant="outlined"
+                                        sx={ styleForm }
+                                    />
+                                </Grid>
+                                <Grid item xs={ 12 } md={ 4 }>
+                                    <Field name="credit_limit">
+                                        { ( { field } ) => (
+                                            <TextField
+                                                { ...field }
+                                                id="credit_limit"
+                                                fullWidth
+                                                required
+                                                type='text'
+                                                label="Batas Kredit Pelanggan"
+                                                variant="outlined"
+                                                value={ `Rp ${values.credit_limit.toLocaleString()}` } // Display formatted value
+                                                onChange={ ( e ) => handleChangePrice( e, setFieldValue ) }
+                                                sx={ styleForm }
+                                            />
+                                        ) }
+                                    </Field>
                                 </Grid>
                                 <Grid item xs={ 12 } md={ 4 }>
                                     <Field name="credit_score">
@@ -277,7 +545,7 @@ function EditCustomer ()
                                                 type='number'
                                                 fullWidth
                                                 required
-                                                label="Customer Credit Score"
+                                                label="Kredit Skor Pelanggan"
                                                 inputProps={ {
 
                                                     max: 5,
@@ -290,37 +558,12 @@ function EditCustomer ()
                                         ) }
                                     </Field>
                                 </Grid>
-
-                                <Grid item xs={ 12 } md={ 4 }>
-                                    <TextField
-                                        id="phone"
-                                        fullWidth
-                                        required
-                                        label="Customer Phone"
-                                        value={ values.phone }
-                                        onChange={ handleChange( "phone" ) }
-                                        variant="outlined"
-                                        sx={ styleForm }
-                                    />
-                                </Grid>
-                                <Grid item xs={ 12 } md={ 4 }>
-                                    <TextField
-                                        id="email"
-                                        fullWidth
-                                        required
-                                        label="Customer Email"
-                                        value={ values.email }
-                                        onChange={ handleChange( "email" ) }
-                                        variant="outlined"
-                                        sx={ styleForm }
-                                    />
-                                </Grid>
                                 <Grid item xs={ 12 } md={ 4 }>
                                     <TextField
                                         id="customerTop"
                                         type='number'
                                         fullWidth
-                                        label="Customer TOP"
+                                        label="Jangka Waktu Pembayaran Pelanggan"
                                         required
                                         value={ values.top }
                                         onChange={ handleChange( "top" ) }
@@ -328,38 +571,22 @@ function EditCustomer ()
                                         sx={ styleForm }
                                     />
                                 </Grid>
-                                <Grid item xs={ 12 } md={ 4 }>
-                                    <TextField
-                                        id="npwp"
-                                        fullWidth
-                                        required
-                                        label="Customer Npwp"
-                                        value={ values.npwp }
-                                        onChange={ handleChange( "npwp" ) }
-                                        variant="outlined"
-                                        sx={ styleForm }
-                                    />
-                                </Grid>
-                                <Grid item xs={ 12 } md={ 4 }>
-                                    <TextField
-                                        id="field"
-                                        fullWidth
-                                        required
-                                        label="Customer Field"
-                                        value={ values.field }
-                                        onChange={ handleChange( "field" ) }
-                                        variant="outlined"
-                                        sx={ styleForm }
-                                    />
-                                </Grid>
                             </Grid>
+                            <div>
+                                <Box sx={ { overflow: "auto" } } marginTop={ 5 }>
+                                    <Box sx={ { width: "100%", display: "table", tableLayout: "fixed" } }>
+                                        <MantineReactTable
+                                            table={ table }
+                                        />
+                                    </Box>
+                                </Box>
+                            </div>
                             <div>
                                 <Stack spacing={ 2 } direction="row" marginY={ 3 }>
                                     <Button
                                         type="submit"
                                         variant='contained'
                                         id='tabelButton'
-                                    // disabled={}
                                     >
                                         Simpan
                                     </Button>
@@ -377,6 +604,19 @@ function EditCustomer ()
                     ) }
                 </Formik>
             </Container>
+            <ModalTambahAlamatBaru
+                openModalAddress={ openModalAddress }
+                setOpenModalAddress={ setOpenModalAddress }
+                custid={ custid }
+                fetchListCustomerAddress={ fetchListCustomerAddress }
+
+            />
+            <ModalUbahAlamat
+                modalUbahAlamat={ modalUbahAlamat }
+                setModalUbahAlamat={ setModalUbahAlamat }
+                fetchListCustomerAddress={ fetchListCustomerAddress }
+                idSelected={ idSelected }
+            />
             <ModalAddCategory
                 addCategory={ addCategory }
                 setAddCategory={ setAddCategory }

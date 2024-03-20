@@ -94,7 +94,7 @@ function ModalAddCategory ( {
                         <IoCloseOutline />
                     </IconButton>
                 </Box>
-                <hr />'
+                <hr />
                 <form onSubmit={ handleSubmit } autoComplete='off'>
                     <Grid container spacing={ 3 }>
                         <Grid item xs={ 12 }>

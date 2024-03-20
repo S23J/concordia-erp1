@@ -148,8 +148,6 @@ function AddCustomer ()
     }
 
 
-
-
     return (
         <>
             <NavbarComponent />
@@ -168,7 +166,7 @@ function AddCustomer ()
                                 id="name"
                                 fullWidth
                                 required
-                                label="Customer Name"
+                                label="Nama Perusahaan"
                                 value={ customerName }
                                 onChange={ ( event ) =>
                                 {
@@ -183,7 +181,7 @@ function AddCustomer ()
                                 id="pic"
                                 fullWidth
                                 required
-                                label="Customer PIC"
+                                label="Nama Personal Kontak"
                                 value={ customerPic }
                                 onChange={ ( event ) =>
                                 {
@@ -195,13 +193,31 @@ function AddCustomer ()
                         </Grid>
                         <Grid item xs={ 12 } md={ 4 }>
                             <TextField
-                                id="creditLimit"
+                                id="phone"
                                 fullWidth
-                                type='text'
+                                type='number'
                                 required
-                                label="Customer Credit Limit"
-                                value={ `Rp ${customerCredit.toLocaleString()}` }
-                                onChange={ handleChangePrice }
+                                label="No. Telp Perusahaan"
+                                value={ customerPhone }
+                                onChange={ ( event ) =>
+                                {
+                                    setCustomerPhone( event.target.value );
+                                } }
+                                variant="outlined"
+                                sx={ styleForm }
+                            />
+                        </Grid>
+                        <Grid item xs={ 12 } md={ 4 }>
+                            <TextField
+                                id="email"
+                                fullWidth
+                                required
+                                label="Email Perusahaan"
+                                value={ customerEmail }
+                                onChange={ ( event ) =>
+                                {
+                                    setCustomerEmail( event.target.value );
+                                } }
                                 variant="outlined"
                                 sx={ styleForm }
                             />
@@ -209,12 +225,12 @@ function AddCustomer ()
                         <Grid item xs={ 12 } md={ 4 }>
                             <Stack spacing={ 2 } direction="row">
                                 <FormControl fullWidth sx={ styleForm }>
-                                    <InputLabel id="demo-simple-select-label">Customer Category</InputLabel>
+                                    <InputLabel id="demo-simple-select-label">Kategori Perusahaan *</InputLabel>
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
                                         value={ customerCategory }
-                                        label="Customer Category"
+                                        label="Kategori Pelanggan"
                                         required
                                         onChange={ handleChange }
                                         sx={ {
@@ -242,7 +258,7 @@ function AddCustomer ()
                                 fullWidth
                                 type='number'
                                 required
-                                label="Customer Mobile Phone"
+                                label="No. Hp Personal Kontak"
                                 value={ customerMobile }
                                 onChange={ ( event ) =>
                                 {
@@ -254,75 +270,10 @@ function AddCustomer ()
                         </Grid>
                         <Grid item xs={ 12 } md={ 4 }>
                             <TextField
-                                id="creditScore"
-                                type='number'
-                                fullWidth
-                                required
-                                label="Customer Credit Score"
-                                inputProps={ {
-                                    max: 5,
-                                    min: 1
-                                } }
-                                value={ customerCreditScore }
-                                onChange={ handleChangeCreditScore }
-                                variant="outlined"
-                                sx={ styleForm }
-                            />
-                        </Grid>
-
-                        <Grid item xs={ 12 } md={ 4 }>
-                            <TextField
-                                id="phone"
-                                fullWidth
-                                type='number'
-                                required
-                                label="Customer Phone"
-                                value={ customerPhone }
-                                onChange={ ( event ) =>
-                                {
-                                    setCustomerPhone( event.target.value );
-                                } }
-                                variant="outlined"
-                                sx={ styleForm }
-                            />
-                        </Grid>
-                        <Grid item xs={ 12 } md={ 4 }>
-                            <TextField
-                                id="email"
-                                fullWidth
-                                required
-                                label="Customer Email"
-                                value={ customerEmail }
-                                onChange={ ( event ) =>
-                                {
-                                    setCustomerEmail( event.target.value );
-                                } }
-                                variant="outlined"
-                                sx={ styleForm }
-                            />
-                        </Grid>
-                        <Grid item xs={ 12 } md={ 4 }>
-                            <TextField
-                                id="customerTop"
-                                type='number'
-                                fullWidth
-                                label="Customer TOP"
-                                required
-                                value={ customerTop }
-                                onChange={ ( event ) =>
-                                {
-                                    setCustomerTop( event.target.value );
-                                } }
-                                variant="outlined"
-                                sx={ styleForm }
-                            />
-                        </Grid>
-                        <Grid item xs={ 12 } md={ 4 }>
-                            <TextField
                                 id="npwp"
                                 fullWidth
                                 required
-                                label="Customer Npwp"
+                                label="NPWP Perusahaan"
                                 value={ customerNpwp }
                                 onChange={ ( event ) =>
                                 {
@@ -337,11 +288,57 @@ function AddCustomer ()
                                 id="field"
                                 fullWidth
                                 required
-                                label="Customer Field"
+                                label="Bidang Industri Perusahaan"
                                 value={ customerField }
                                 onChange={ ( event ) =>
                                 {
                                     setCustomerField( event.target.value );
+                                } }
+                                variant="outlined"
+                                sx={ styleForm }
+                            />
+                        </Grid>
+                        <Grid item xs={ 12 } md={ 4 }>
+                            <TextField
+                                id="creditLimit"
+                                fullWidth
+                                type='text'
+                                required
+                                label="Batas Kredit Pelanggan"
+                                value={ `Rp ${customerCredit.toLocaleString()}` }
+                                onChange={ handleChangePrice }
+                                variant="outlined"
+                                sx={ styleForm }
+                            />
+                        </Grid>
+                        <Grid item xs={ 12 } md={ 4 }>
+                            <TextField
+                                id="creditScore"
+                                type='number'
+                                fullWidth
+                                required
+                                label="Kredit Skor Pelanggan"
+                                inputProps={ {
+                                    max: 5,
+                                    min: 1
+                                } }
+                                value={ customerCreditScore }
+                                onChange={ handleChangeCreditScore }
+                                variant="outlined"
+                                sx={ styleForm }
+                            />
+                        </Grid>
+                        <Grid item xs={ 12 } md={ 4 }>
+                            <TextField
+                                id="customerTop"
+                                type='number'
+                                fullWidth
+                                label="Jangka Waktu Pembayaran Pelanggan"
+                                required
+                                value={ customerTop }
+                                onChange={ ( event ) =>
+                                {
+                                    setCustomerTop( event.target.value );
                                 } }
                                 variant="outlined"
                                 sx={ styleForm }
@@ -354,7 +351,6 @@ function AddCustomer ()
                                 type="submit"
                                 variant='contained'
                                 id='tabelButton'
-                            // disabled={}
                             >
                                 Simpan
                             </Button>

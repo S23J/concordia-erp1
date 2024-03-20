@@ -106,8 +106,6 @@ function AddNewFunnels ()
         }
     };
 
-
-
     const getColumns = () => [
         {
             header: 'Produk',
@@ -395,7 +393,7 @@ function AddNewFunnels ()
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid item md={ 4 } xs={ 12 } spacing={ 3 }>
+                            <Grid item md={ 4 } xs={ 12 } >
                                 <Grid container spacing={ 3 } marginBottom={ 3 }> {/* Add spacing between grid items and set marginBottom */ }
                                     <Grid item md={ 12 } xs={ 12 }>
                                         <TextField

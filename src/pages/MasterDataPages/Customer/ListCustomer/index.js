@@ -217,7 +217,7 @@ function ListCustomer ()
 
             </div>
             <div>
-                <Box sx={ { overflow: "auto" } } marginTop={ 5 } marginX={ 3 }>
+                <Box sx={ { overflow: "auto" } } marginY={ 5 } marginX={ 3 }>
                     <Box sx={ { width: "100%", display: "table", tableLayout: "fixed" } }>
                         <MantineReactTable
                             table={ table }
