@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { IoIosAddCircleOutline } from "react-icons/io";
 import ModalAddCategory from '../../../../component/Modal/Admin/ModalAddCategory';
+import RatingComponent from '../../../../component/RatingComponent';
 
 function AddCustomer ()
 {
@@ -31,7 +32,7 @@ function AddCustomer ()
     const [ customerNpwp, setCustomerNpwp ] = useState( '' );
     const [ customerField, setCustomerField ] = useState( '' );
     const [ customerCredit, setCustomerCredit ] = useState( 0 );
-    const [ customerCreditScore, setCustomerCreditScore ] = useState( 1 );
+    const [ customerCreditScore, setCustomerCreditScore ] = useState( 0 );
     const [ customerTop, setCustomerTop ] = useState( '' );
     const [ customerCategory, setCustomerCategory ] = useState( '' );
     const handleChange = ( event ) =>
@@ -46,13 +47,13 @@ function AddCustomer ()
         setCustomerCredit( numericValue );
     }
 
-    const handleChangeCreditScore = ( event ) =>
-    {
-        const value = event.target.value;
-        if ( value === '' || ( parseInt( value ) >= 1 && parseInt( value ) <= 5 ) ) {
-            setCustomerCreditScore( value );
-        }
-    };
+    // const handleChangeCreditScore = ( event ) =>
+    // {
+    //     const value = event.target.value;
+    //     if ( value === '' || ( parseInt( value ) >= 1 && parseInt( value ) <= 5 ) ) {
+    //         setCustomerCreditScore( value );
+    //     }
+    // };
 
 
     const fetchListCategory = () =>
@@ -313,23 +314,6 @@ function AddCustomer ()
                         </Grid>
                         <Grid item xs={ 12 } md={ 4 }>
                             <TextField
-                                id="creditScore"
-                                type='number'
-                                fullWidth
-                                required
-                                label="Kredit Skor Pelanggan"
-                                inputProps={ {
-                                    max: 5,
-                                    min: 1
-                                } }
-                                value={ customerCreditScore }
-                                onChange={ handleChangeCreditScore }
-                                variant="outlined"
-                                sx={ styleForm }
-                            />
-                        </Grid>
-                        <Grid item xs={ 12 } md={ 4 }>
-                            <TextField
                                 id="customerTop"
                                 type='number'
                                 fullWidth
@@ -343,6 +327,9 @@ function AddCustomer ()
                                 variant="outlined"
                                 sx={ styleForm }
                             />
+                        </Grid>
+                        <Grid item xs={ 12 } md={ 4 } style={ { display: 'flex', alignItems: 'center' } }>
+                            <RatingComponent ratingValue={ customerCreditScore } setRatingValue={ setCustomerCreditScore } />
                         </Grid>
                     </Grid>
                     <div>

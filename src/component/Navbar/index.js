@@ -93,8 +93,7 @@ function NavbarComponent() {
                         {open ? <MdExpandLess color='white' size={20} /> : <MdExpandMore color='white' size={20} />}
                     </ListItemButton>
                     <Collapse in={open} timeout="auto" unmountOnExit>
-                        <CustomList title={'Customer'} link={'/customer'} disablePadding={true} />
-                        <CustomList title={'Customer Address'} link={'/customer-address'} disablePadding={true} />
+                        <CustomList title={ 'Customer' } link={ '/customer' } disablePadding={ true } />
                     </Collapse>
 
                 </List>

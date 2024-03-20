@@ -14,6 +14,7 @@ import { MdEdit } from 'react-icons/md';
 import { AiFillDelete } from 'react-icons/ai';
 import ModalTambahAlamatBaru from '../../../../component/Modal/Admin/ModalTambahAlamat';
 import ModalUbahAlamat from '../../../../component/Modal/Admin/ModalEditAlamat';
+import RatingComponent from '../../../../component/RatingComponent';
 
 
 function EditCustomer ()
@@ -62,7 +63,7 @@ function EditCustomer ()
             setFieldValue( 'credit_score', value );
         }
     };
-
+    const [ ratingValue, setRatingValue ] = useState( 0 );
 
     const fetchFunnelsDataDetail = () =>
     {
@@ -77,6 +78,7 @@ function EditCustomer ()
 
                 setCustomerDetail( res.data );
                 setCustomerCategory( res.data.category );
+                setRatingValue( res.data.credit_score );
                 // console.log( res.data )
             } )
             .catch( err =>
@@ -347,8 +349,13 @@ function EditCustomer ()
     const handleEditCustomer = async ( values ) =>
     {
         // console.log( values )
+        const finalData = {
+            ...values,
+            credit_score: ratingValue
+        }
+
         try {
-            const response = await axios.patch( `/api/v1/core/customers/${custid}/`, values,
+            const response = await axios.patch( `/api/v1/core/customers/${custid}/`, finalData,
                 {
                     headers: {
                         'Access-Control-Allow-Origin': '*',
@@ -537,28 +544,6 @@ function EditCustomer ()
                                     </Field>
                                 </Grid>
                                 <Grid item xs={ 12 } md={ 4 }>
-                                    <Field name="credit_score">
-                                        { ( { field } ) => (
-                                            <TextField
-                                                { ...field }
-                                                id="credit_score"
-                                                type='number'
-                                                fullWidth
-                                                required
-                                                label="Kredit Skor Pelanggan"
-                                                inputProps={ {
-
-                                                    max: 5,
-                                                    min: 1
-                                                } }
-                                                value={ values.credit_score }
-                                                onChange={ ( e ) => handleChangeCreditScore( e, setFieldValue ) }
-                                                sx={ styleForm }
-                                            />
-                                        ) }
-                                    </Field>
-                                </Grid>
-                                <Grid item xs={ 12 } md={ 4 }>
                                     <TextField
                                         id="customerTop"
                                         type='number'
@@ -570,6 +555,9 @@ function EditCustomer ()
                                         variant="outlined"
                                         sx={ styleForm }
                                     />
+                                </Grid>
+                                <Grid item xs={ 12 } md={ 4 } style={ { display: 'flex', alignItems: 'center' } }>
+                                    <RatingComponent ratingValue={ ratingValue } setRatingValue={ setRatingValue } />
                                 </Grid>
                             </Grid>
                             <div>
