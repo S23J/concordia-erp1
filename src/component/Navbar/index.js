@@ -12,184 +12,160 @@ import { FaDatabase } from "react-icons/fa6";
 import { MdExpandLess, MdExpandMore } from "react-icons/md";
 
 
-function NavbarComponent ()
-{
-    const { tokens, setTokens, setUserInfo, userInfo } = useContext( AuthContext );
-    const [ openSidebar, setOpenSidebar ] = useState( false )
+function NavbarComponent() {
+    const { tokens, setTokens, setUserInfo, userInfo } = useContext(AuthContext);
+    const [openSidebar, setOpenSidebar] = useState(false)
 
-    const toggleSidebar = () =>
-    {
-        setOpenSidebar( !openSidebar )
+    const toggleSidebar = () => {
+        setOpenSidebar(!openSidebar)
     }
-    const [ open, setOpen ] = React.useState( true );
+    const [open, setOpen] = React.useState(true);
 
-    const handleClick = () =>
-    {
-        setOpen( !open );
+    const handleClick = () => {
+        setOpen(!open);
     };
 
     const navigate = useNavigate();
 
-    const LogoutSession = async () =>
-    {
+    const LogoutSession = async () => {
         toggleSidebar()
-      const confirmDelete = await Swal.fire( {
-          title: 'Apakah anda yakin ingin keluar?',
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonText: 'Keluar',
-          cancelButtonText: 'Batal',
-    } );
+        const confirmDelete = await Swal.fire({
+            title: 'Apakah anda yakin ingin keluar?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Keluar',
+            cancelButtonText: 'Batal',
+        });
 
-      if ( !confirmDelete.isConfirmed ) {
+        if (!confirmDelete.isConfirmed) {
 
-          return;
-      }
-      try {
-          await axios.post(
-              '/api/v1/profiles/auth/logout/',
-              {},
-              {
-                  headers: {
-                      'Access-Control-Allow-Origin': '*',
-                      withCredentials: true,
-                      Authorization: `Token ${tokens.token}`,
-                  },
-              }
-          );
+            return;
+        }
+        try {
+            await axios.post(
+                '/api/v1/profiles/auth/logout/',
+                {},
+                {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        withCredentials: true,
+                        Authorization: `Token ${tokens.token}`,
+                    },
+                }
+            );
 
-        sessionStorage.removeItem( 'userInfo' );
-        sessionStorage.removeItem( 'token' );
-        sessionStorage.removeItem( 'groups' );
-        setTokens();
-        setUserInfo();
-        Swal.fire( {
-            icon: 'success',
-            title: 'Logout Berhasil',
-            showConfirmButton: false,
-            timer: 2000,
-      } );
-        navigate( '/' );
-    } catch ( error ) {
-    // console.log( error );
-        Swal.fire( {
-            icon: 'error',
-            title: 'Warning!',
-            text: 'Logout gagal!',
-      } );
-      }
-  };
+            sessionStorage.removeItem('userInfo');
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('groups');
+            setTokens();
+            setUserInfo();
+            Swal.fire({
+                icon: 'success',
+                title: 'Logout Berhasil',
+                showConfirmButton: false,
+                timer: 2000,
+            });
+            navigate('/');
+        } catch (error) {
+            // console.log( error );
+            Swal.fire({
+                icon: 'error',
+                title: 'Warning!',
+                text: 'Logout gagal!',
+            });
+        }
+    };
 
-    const listLinkNavigasi = {
-        salesManager: [
-            {
-                title: 'Home',
-                link: '/sales-manager'
-            },
-            {
-                title: 'Data Funnels',
-              link: '#'
-          },
-      ],
-      sales: [
-          {
-              title: 'Home',
-              link: '/sales'
-          },
-          {
-              title: 'Funnels',
-              link: '/funnels'
-          },
-          {
-              title: 'Order Request',
-              link: '/order-request'
-          },
-      ]
-  }
 
-    const listLinkNavigasi2 = {
+    const ListNavigasi = () => {
+        if (userInfo?.groups.includes(3)) {
+            return (
+                <List>
+                    <CustomList title={'Home'} link={'/sales'} disablePadding={true} />
+                    <CustomList title={'Funnels'} link={'/funnels'} disablePadding={true} />
+                    <CustomList title={'Order Request'} link={'/order-request'} disablePadding={true} />
 
-      sales: [
-          {
-              title: 'Customer',
-              link: '/customer'
-          },
-          {
-              title: 'Customer Address',
-              link: '/customer-address'
-          },
-          {
-              title: 'Category Customer',
-              link: '/customer-category'
-          },
-      ]
-  }
+                    <ListItemButton sx={{ marginTop: 2 }} onClick={handleClick}>
+                        <ListItemIcon>
+                            <FaDatabase />
+                        </ListItemIcon>
+                        <ListItemText primary="Master Data" id='dropdownText' />
+                        {open ? <MdExpandLess color='white' size={20} /> : <MdExpandMore color='white' size={20} />}
+                    </ListItemButton>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                        <CustomList title={'Customer'} link={'/customer'} disablePadding={true} />
+                        <CustomList title={'Customer Address'} link={'/customer-address'} disablePadding={true} />
+                    </Collapse>
+
+                </List>
+
+            )
+        } else if (userInfo?.groups.includes(4)) {
+            return (
+                <List>
+                    <CustomList title={'Home'} link={'/sales-manager'} disablePadding={true} />
+                    <CustomList title={'Data Funnels'} link={'/data-funnels'} disablePadding={true} />
+                </List>
+            )
+        } else {
+            <></>
+        }
+    }
 
     return (
-      <AppBar sx={ { backgroundColor: 'white' } } position="static">
-          <Toolbar>
-              <Grid container justifyContent={ 'space-between' } alignItems={ 'center' } p={ 1 }>
-                  <IconButton
-                      size="large"
-                      edge="start"
-                      aria-label="menu"
-                      sx={ { mr: 2, backgroundColor: 'white' } }
-                      onClick={ () => toggleSidebar() }
-                  >
-                      <MdMenu color='black' />
-                  </IconButton>
-                  <img
-                      alt='logoGSK'
-                      src={ LogoGsk }
-                      width={ 70 }
-                      height={ 70 }
-                  />
-              </Grid>
+        <AppBar sx={{ backgroundColor: 'white' }} position="static">
+            <Toolbar>
+                <Grid container justifyContent={'space-between'} alignItems={'center'} p={1}>
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        aria-label="menu"
+                        sx={{ mr: 2, backgroundColor: 'white' }}
+                        onClick={() => toggleSidebar()}
+                    >
+                        <MdMenu color='black' />
+                    </IconButton>
+                    <img
+                        alt='logoGSK'
+                        src={LogoGsk}
+                        width={70}
+                        height={70}
+                    />
+                </Grid>
 
-          </Toolbar>
-          <Drawer open={ openSidebar } onClose={ toggleSidebar }>
-              <Box sx={ { width: 250, backgroundColor: '#1E1E1E', height: '100vh', } } role="presentation">
-                  <Grid container sx={ { height: '100%' } } justifyContent={ 'space-between' } alignItems={ 'space-between' }>
-                      <Grid item xs={ 12 }>
-                          <List >
-                              <ListItem key={ 'Menu' } sx={ { justifyContent: 'space-between' } }>
-                                  <ListItemText primaryTypographyProps={ { fontFamily: 'Poppins-Bold' } } sx={ { color: 'white' } } primary={ 'Menu' } />
-                                  <ListItemIcon onClick={ toggleSidebar }>
-                                      <MdClose color='white' size={ 28 } />
-                                  </ListItemIcon>
-                              </ListItem>
-                          </List>
-                          <List>
-                              <CustomList userInfo={ userInfo } listLinkNavigasi={ listLinkNavigasi } navigate={ navigate } />
-                              <ListItemButton onClick={ handleClick }>
-                                  <ListItemIcon>
-                                      <FaDatabase />
-                                  </ListItemIcon>
-                                  <ListItemText primary="Master Data" id='dropdownText' />
-                                  { open ? <MdExpandLess color='white' size={ 20 } /> : <MdExpandMore color='white' size={ 20 } /> }
-                              </ListItemButton>
-                              <Collapse in={ open } timeout="auto" unmountOnExit>
-                                  <CustomList userInfo={ userInfo } listLinkNavigasi={ listLinkNavigasi2 } navigate={ navigate } />
-                              </Collapse>
-                          </List>
-                      </Grid>
-                      <Grid container alignItems={ 'flex-end' } item xs={ 12 }>
-                          <List>
-                              <ListItem key={ 'keluar' } disablePadding>
-                                  <ListItemButton onClick={ LogoutSession }>
-                                      <ListItemText primaryTypographyProps={ { fontFamily: 'Poppins-Regular' } } sx={ { color: 'white', } } primary={ 'Keluar' } />
-                                  </ListItemButton>
-                              </ListItem>
-                          </List>
-                      </Grid>
+            </Toolbar>
+            <Drawer open={openSidebar} onClose={toggleSidebar}>
+                <Box sx={{ width: 250, backgroundColor: '#1E1E1E', height: '100vh', }} role="presentation">
+                    <Grid container sx={{ height: '100%' }} justifyContent={'space-between'} alignItems={'space-between'}>
+                        <Grid item xs={12}>
+                            <List >
+                                <ListItem key={'Menu'} sx={{ justifyContent: 'space-between' }}>
+                                    <ListItemText primaryTypographyProps={{ fontFamily: 'Poppins-Bold' }} sx={{ color: 'white' }} primary={'Menu'} />
+                                    <ListItemIcon onClick={toggleSidebar}>
+                                        <MdClose color='white' size={28} />
+                                    </ListItemIcon>
+                                </ListItem>
+                            </List>
 
-                  </Grid>
+                            {ListNavigasi()}
+                        </Grid>
+                        <Grid container alignItems={'flex-end'} item xs={12}>
+                            <List>
+                                <ListItem key={'keluar'} disablePadding>
+                                    <ListItemButton onClick={LogoutSession}>
+                                        <ListItemText primaryTypographyProps={{ fontFamily: 'Poppins-Regular' }} sx={{ color: 'white', }} primary={'Keluar'} />
+                                    </ListItemButton>
+                                </ListItem>
+                            </List>
+                        </Grid>
 
-              </Box>
-          </Drawer>
-      </AppBar >
+                    </Grid>
 
-  )
+                </Box>
+            </Drawer>
+        </AppBar >
+
+    )
 }
 
 export default NavbarComponent

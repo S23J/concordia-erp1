@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { numberFormat } from '../../../../utils';
 import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
+import { LinearProgressWithLabel } from '../../../LinearProgressWithLabel';
 
 function ModalApproval({
     open,
@@ -218,7 +219,7 @@ function ModalApproval({
             case 40:
                 return '40% - Permintaan Harga';
             case 60:
-                return '60% - Penawaran Harga';
+                return 'Penawaran Harga';
             case 80:
                 return '80% - Menunggu PO';
             case 100:
@@ -321,7 +322,7 @@ function ModalApproval({
         >
             <Box sx={style}>
                 <Grid container>
-                    <Grid p={3} item container xs={12} sx={{ overflow: 'auto', maxHeight: '80vh', height: '80vh', }}>
+                    <Grid p={3} item container xs={12} sx={{ overflow: 'auto', maxHeight: '75vh', height: '75vh', }}>
                         <Grid container spacing={3} >
                             <Grid item md={12} xs={12} marginTop={3} >
                                 <h3 style={{ fontFamily: 'Poppins-Regular', textAlign: 'center' }}>
@@ -420,29 +421,13 @@ function ModalApproval({
                                         />
                                     </Grid>
                                     <Grid item md={12} xs={12}>
-                                        <Grid item xs={12}>
-                                            <TextField
-                                                id="Status"
-                                                fullWidth
-                                                required
-                                                label="Status"
-                                                value={statusSwitchCase(status)}
-                                                variant="outlined"
-                                                sx={styleForm}
-                                                InputProps={{
-                                                    readOnly: true,
-                                                }}
-                                            />
-                                        </Grid>
-                                    </Grid>
-                                    <Grid item md={12} xs={12}>
                                         <TextField
                                             id="catatan"
                                             label="Catatan"
                                             value={dataFunnel?.remarks}
                                             fullWidth
                                             multiline
-                                            rows={4.5}
+                                            rows={8}
                                             InputProps={{
                                                 readOnly: true,
                                                 sx: {
@@ -505,6 +490,16 @@ function ModalApproval({
                                             sx={styleForm}
                                         />
                                     </Grid>
+
+                                </Grid>
+                                <Grid container spacing={3} marginBottom={3}> {/* Add spacing between grid items and set marginBottom */}
+                                    <Grid item md={12} xs={12}>
+                                        <Typography sx={{
+                                            fontFamily: 'Poppins-Regular',
+                                        }} variant='h6'>Status : {statusSwitchCase(dataFunnel?.status)}</Typography>
+                                        <LinearProgressWithLabel value={dataFunnel?.status} />
+                                    </Grid>
+
                                 </Grid>
                             </Grid>
 
@@ -521,17 +516,28 @@ function ModalApproval({
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item container xs={12} p={1} sx={{ backgroundColor: '#ECECEC', maxHeight: '10vh', height: '10vh', justifyContent: 'flex-end' }}>
-                        <Grid container item xs={12} p={1} sx={{ gap: 1, justifyContent: 'flex-end' }}>
+                    <Grid item container xs={12} p={1} sx={{ backgroundColor: '#ECECEC', maxHeight: '15vh', height: '15vh', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Grid container item xs={12} md={6} p={1} sx={{ gap: 1, alignItems: 'center', justifyContent: 'flex-start' }}>
+                            {dataFunnel?.approval === null ? <></> : (
+                                <Typography variant="h6" sx={{
+                                    fontFamily: 'Poppins-Regular',
+                                }}> Status Approval : {dataFunnel?.approval === true ? 'Approve' : 'Tidak Approve'}</Typography>
+                            )}
+                        </Grid>
+                        <Grid container item xs={12} md={6} sx={{ gap: 1, justifyContent: 'flex-end' }}>
                             <Stack
                                 direction="row"
                                 divider={<Divider orientation="vertical" flexItem />}
-                                spacing={1}
+                                spacing={0.5}
                                 useFlexGap flexWrap="wrap"
-                                p={0.5}
+                                p={0.1}
                             >
-                                <Button disableElevation onClick={() => submitApproval('Approve', true)} size="small" color='success' variant="contained">Approve</Button>
-                                <Button disableElevation onClick={() => submitApproval('Tidak Approve', false)} size="small" color='error' variant="contained">Tidak Approve</Button>
+                                {dataFunnel?.approval !== null ? <></> : (
+                                    <>
+                                        <Button disableElevation onClick={() => submitApproval('Approve', true)} size="small" color='success' variant="contained">Approve</Button>
+                                        <Button disableElevation onClick={() => submitApproval('Tidak Approve', false)} size="small" color='error' variant="contained">Tidak Approve</Button>
+                                    </>
+                                )}
                                 <Button disableElevation onClick={toogleOpenModalApproval} style={{ backgroundColor: '#a5a5a5' }} size="small" color='secondary' disableTouchRipple disableFocusRipple variant="contained">Kembali</Button>
                             </Stack>
                         </Grid>

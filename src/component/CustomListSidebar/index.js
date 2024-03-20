@@ -1,25 +1,14 @@
 import { ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-export const CustomList = ({ userInfo, listLinkNavigasi, navigate, LogoutSession }) => {
-    if (userInfo?.groups.includes(4)) {
-        return (
-            listLinkNavigasi.salesManager.map((item, index) => (
-                <ListItem key={item.title} disablePadding>
-                    <ListItemButton onClick={() => navigate(item.link)}>
-                        <ListItemText primaryTypographyProps={{ fontFamily: 'Poppins-Regular' }} sx={{ color: 'white' }} primary={item.title} />
-                    </ListItemButton>
-                </ListItem>
-            )))
-    } else if (userInfo?.groups.includes(3)) {
-        return (
-            listLinkNavigasi.sales.map((item, index) => (
-                <ListItem key={item.title} disablePadding>
-                    <ListItemButton onClick={() => navigate(item.link)}>
-                        <ListItemText primaryTypographyProps={{ fontFamily: 'Poppins-Regular' }} sx={{ color: 'white' }} primary={item.title} />
-                    </ListItemButton>
-                </ListItem>
-            ))
-        )
-    }
-    return null; // Return null if neither condition is met
+export const CustomList = ({ title, link, disablePadding }) => {
+    const navigate = useNavigate()
+    return (
+        <ListItem key={title} disablePadding={disablePadding ? disablePadding : false}>
+            <ListItemButton onClick={() => navigate(link)}>
+                <ListItemText primaryTypographyProps={{ fontFamily: 'Poppins-Regular' }} sx={{ color: 'white' }} primary={title} />
+            </ListItemButton>
+        </ListItem>
+    )
+
 };

@@ -2,19 +2,23 @@ import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "./pages/Login";
-import PrivateRouteComp from "./auth/PrivateRoute";
+
 import Home from "./pages/Home";
-import SalesHomePage from "./pages/Sales/Home";
-import SalesManagerHomePage from "./pages/SalesManager/Home";
-import Funnels from "./pages/Sales/Funnels";
-import OrderRequest from "./pages/Sales/OrderRequest";
-import AddNewFunnels from "./pages/Sales/AddNewFunnels";
-import EditFunnels from "./pages/Sales/EditFunnels";
-import ListCustomer from "./pages/MasterDataPages/Customer/ListCustomer";
-import AddCustomer from "./pages/MasterDataPages/Customer/AddCustomer";
-import EditCustomer from "./pages/MasterDataPages/Customer/EditCustomer";
-import { ListFunnels } from "./pages";
+
+import {
+  AddCustomer,
+  AddNewFunnels,
+  EditCustomer,
+  EditFunnels,
+  Funnels,
+  ListCustomer,
+  ListFunnels,
+  Login,
+  OrderRequest,
+  SalesHomePage,
+  SalesManagerHomePage
+} from "./pages";
+import { PrivateRouteComp } from "./auth";
 
 
 function App() {
