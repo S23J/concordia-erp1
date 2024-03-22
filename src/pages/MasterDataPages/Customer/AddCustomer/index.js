@@ -50,36 +50,36 @@ function AddCustomer() {
     // };
 
 
-    const fetchListCategory = () => {
-        axios.get(`/api/v1/core/custcategories/`,
-            {
-                headers:
+    const fetchListCategory = async () => {
+
+        try {
+            const response = await axios.get(`/api/v1/core/custcategories/`,
                 {
-                    withCredentials: true,
-                    Authorization: `Token ${tokens?.token}`,
-                },
+                    headers:
+                    {
+                        withCredentials: true,
+                        Authorization: `Token ${tokens?.token}`,
+                    },
 
-            })
-            .then(res => {
+                })
+            setListCategory(response.data);
+            // console.log( res.data )
 
-                setListCategory(res.data);
-                // console.log( res.data )
+        } catch (err) {
+            if (err.response?.status === 401) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Sesi telah habis',
+                    text: 'Sesi anda telah berakhir. Silahkan login kembali.',
+                    confirmButtonText: 'Log In',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigate('/');
+                    }
+                });
 
-            }).catch(err => {
-                if (err.response?.status === 401) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Sesi telah habis',
-                        text: 'Sesi anda telah berakhir. Silahkan login kembali.',
-                        confirmButtonText: 'Log In',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            navigate('/');
-                        }
-                    });
-
-                } else (console.log(err))
-            })
+            } else (console.log(err))
+        }
     }
 
     useEffect(() => {

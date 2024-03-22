@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../../../auth';
 import { NavbarComponent } from '../../../component';
-import { Button, Container, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, Stack, Typography, styled } from '@mui/material';
+import { Button, Container, FormControl, FormLabel, Grid, InputLabel, MenuItem, Select, Stack, Typography, styled } from '@mui/material';
 import Swal from 'sweetalert2';
 import axios from '../../../API/axios';
 import { MdCloudUpload } from "react-icons/md";
@@ -19,13 +19,17 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-function AddNewOrderRequest() {
-
+function EditOrderRequest() {
+    const { order_id } = useParams();
     const { userInfo, tokens } = useContext(AuthContext);
     const [listFunnels, setListFunnels] = useState([])
     const [listCustomer, setListCustomer] = useState([])
+    const [dataOrderRequest, setDataOrderRequest] = useState({})
     const [selectedFunnel, setSelectedFunnel] = useState('')
     const [selectedCust, setSelectedCust] = useState('')
+    const [po_changed, setPo_change] = useState(false)
+    const [form_changed, setForm_change] = useState(false)
+    const [npwp_changed, setNpwp_change] = useState(false)
     const [PO_Doc, setPO_Doc] = useState([])
     const [Form_Pic, setForm_Pic] = useState([])
     const [NPWP_Pic, setNPWP_Pic] = useState([])
@@ -35,7 +39,61 @@ function AddNewOrderRequest() {
         navigate(-1)
     }
 
-    const handleChangeCustomer = (event) => { setIsNewCustomer(event.target.value) }
+
+    const fetchDataOrderRequest = async () => {
+
+        try {
+            const response = await axios.get(`/api/v1/crm/orderrequest/${order_id}/`,
+                {
+                    headers:
+                    {
+                        withCredentials: true,
+                        Authorization: `Token ${tokens?.token}`,
+                    },
+
+                })
+            setDataOrderRequest(response.data);
+            setSelectedCust(response.data.customer)
+            setSelectedFunnel(response.data.funnel)
+            setPO_Doc([{ name: response.data.po_doc.split("/").pop() }])
+            if (response.data.npwp_pic) {
+                setNPWP_Pic([{ name: response.data.npwp_pic.split("/").pop() }])
+            }
+            if (response.data.form_pic) {
+                setForm_Pic([{ name: response.data.form_pic.split("/").pop() }])
+            }
+            if (!response.data.customer && response.data.form_pic && response.data.npwp_pic) {
+                setIsNewCustomer('new')
+            } else if (response.data.customer && !response.data.form_pic && !response.data.npwp_pic) {
+                setIsNewCustomer('exist')
+            }
+
+
+
+
+        } catch (err) {
+            if (err.response?.status === 401) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Sesi telah habis',
+                    text: 'Sesi anda telah berakhir. Silahkan login kembali.',
+                    confirmButtonText: 'Log In',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigate('/');
+                    }
+                });
+
+            } else (console.log(err))
+        }
+    }
+
+    useEffect(() => {
+
+        if (order_id != null) fetchDataOrderRequest()
+
+    }, [order_id]);
+
 
     const fetchListCustomer = async () => {
         try {
@@ -82,6 +140,7 @@ function AddNewOrderRequest() {
 
             const filteredData = response.data.filter(item => item.sales === userInfo?.id);
             setListFunnels(filteredData);
+
         }
         catch (err) {
             if (err.response?.status === 401) {
@@ -117,16 +176,10 @@ function AddNewOrderRequest() {
 
 
         const dataNew = {
-            sales: userInfo.id,
             funnel: selectedFunnel,
-            po_doc: PO_Doc[0],
-            form_pic: Form_Pic[0],
-            npwp_pic: NPWP_Pic[0]
         }
         const dataExist = {
-            sales: userInfo.id,
             funnel: selectedFunnel,
-            po_doc: PO_Doc[0],
             customer: selectedCust,
         }
 
@@ -140,10 +193,17 @@ function AddNewOrderRequest() {
             formdataExist.append(key, dataExist[key]);
         });
 
+        if (po_changed) {
+            formdataNew.append('po_doc', PO_Doc[0])
+            formdataExist.append('po_doc', PO_Doc[0])
+        }
 
+        if (form_changed) { formdataNew.append('form_pic', Form_Pic[0]) }
+        if (npwp_changed) { formdataNew.append('npwp_pic', NPWP_Pic[0]) }
 
         try {
-            const response = await axios.post(`/api/v1/crm/orderrequest/`, isNewCustomer === 'new' ? formdataNew : formdataExist,
+
+            const response = await axios.patch(`/api/v1/crm/orderrequest/${order_id}/`, isNewCustomer === 'new' ? formdataNew : formdataExist,
                 {
                     headers: {
                         'Access-Control-Allow-Origin': '*',
@@ -185,9 +245,12 @@ function AddNewOrderRequest() {
                             <h5 style={{ fontFamily: 'Poppins-Regular', textAlign: 'center' }}>
                                 Sales: {userInfo?.first_name} {userInfo?.last_name}
                             </h5>
+                            <h5 style={{ fontFamily: 'Poppins-Regular', textAlign: 'center' }}>
+                                No. Order Request: {dataOrderRequest?.request_no}
+                            </h5>
                         </Grid>
                         <Grid item xs={12}>
-                            <Grid container spacing={3} marginTop={3}> {/* Add spacing between grid containers */}
+                            <Grid container spacing={4} marginTop={3}> {/* Add spacing between grid containers */}
                                 <Grid item md={4} xs={12}>
                                     <Grid container spacing={3} marginBottom={2}> {/* Add spacing between grid items and set marginBottom */}
                                         <Grid item md={12} xs={12}>
@@ -230,7 +293,10 @@ function AddNewOrderRequest() {
                                                     startIcon={<MdCloudUpload />}
                                                 >
                                                     Upload file
-                                                    <VisuallyHiddenInput accept=".doc,.docx,.pdf,.txt" onChange={(event) => setPO_Doc(event.target.files)} type="file" />
+                                                    <VisuallyHiddenInput accept=".doc,.docx,.pdf,.txt" onChange={(event) => {
+                                                        setPo_change(true)
+                                                        setPO_Doc(event.target.files)
+                                                    }} type="file" />
                                                 </Button>
                                                 <Typography style={{ fontFamily: 'Poppins-Regular' }} variant='caption'>file : {PO_Doc[0]?.name}</Typography>
                                             </FormControl>
@@ -238,28 +304,14 @@ function AddNewOrderRequest() {
                                         </Grid>
                                     </Grid>
                                 </Grid>
+
+
                                 <Grid item md={4} xs={12}>
                                     <Grid container spacing={2} marginBottom={2}> {/* Add spacing between grid items and set marginBottom */}
                                         <Grid item md={12} xs={12}>
-                                            <FormControl fullWidth sx={styleForm}>
-                                                <FormLabel id="radio-buttons-customer">Customer</FormLabel>
-                                                <RadioGroup
-                                                    row
-                                                    defaultValue={isNewCustomer}
-                                                    onChange={handleChangeCustomer}
-                                                    aria-labelledby="radio-buttons-customer"
-                                                    name="row-radio-buttons-group"
-                                                >
-                                                    <FormControlLabel value='new' control={<Radio />} label="Customer Baru" />
-                                                    <FormControlLabel value='exist' control={<Radio />} label="Bukan Customer Baru" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item md={12} xs={12}>
-
                                             {isNewCustomer === 'new' ?
                                                 (<>
-                                                    <FormControl fullWidth style={{ gap: 5, marginBottom: 10 }} sx={styleForm}>
+                                                    <FormControl fullWidth style={{ gap: 5, marginTop: -18, marginBottom: 10 }} sx={styleForm}>
                                                         <FormLabel id="radio-buttons-customer">Form Customer : </FormLabel>
                                                         <Button
                                                             component="label"
@@ -270,7 +322,10 @@ function AddNewOrderRequest() {
                                                             startIcon={<MdCloudUpload />}
                                                         >
                                                             Upload file
-                                                            <VisuallyHiddenInput accept="image/*" onChange={(event) => setForm_Pic(event.target.files)} type="file" />
+                                                            <VisuallyHiddenInput accept="image/*" onChange={(event) => {
+                                                                setForm_change(true)
+                                                                setForm_Pic(event.target.files)
+                                                            }} type="file" />
                                                         </Button>
                                                         <Typography style={{ fontFamily: 'Poppins-Regular' }} variant='caption'>file : {Form_Pic[0]?.name}</Typography>
                                                     </FormControl>
@@ -285,13 +340,18 @@ function AddNewOrderRequest() {
                                                             startIcon={<MdCloudUpload />}
                                                         >
                                                             Upload file
-                                                            <VisuallyHiddenInput accept="image/*" onChange={(event) => setNPWP_Pic(event.target.files)} type="file" />
+                                                            <VisuallyHiddenInput accept="image/*"
+                                                                onChange={(event) => {
+                                                                    setNpwp_change(true)
+                                                                    setNPWP_Pic(event.target.files)
+                                                                }
+                                                                } type="file" />
                                                         </Button>
                                                         <Typography style={{ fontFamily: 'Poppins-Regular' }} variant='caption'>file : {NPWP_Pic[0]?.name}</Typography>
                                                     </FormControl>
                                                 </>)
                                                 : (
-                                                    <FormControl fullWidth style={{ marginTop: 10 }} sx={styleForm}>
+                                                    <FormControl fullWidth sx={styleForm}>
                                                         <InputLabel id="demo-simple-select-label">Customer</InputLabel>
                                                         <Select
                                                             labelId="demo-simple-select-label"
@@ -355,7 +415,7 @@ function AddNewOrderRequest() {
     )
 }
 
-export default AddNewOrderRequest
+export default EditOrderRequest
 const styleForm = {
     '& label': {
         fontFamily: 'Poppins-Medium', // Change the font-family of the label always

@@ -10,6 +10,7 @@ import {
   AddNewFunnels,
   EditCustomer,
   EditFunnels,
+  EditOrderRequest,
   Funnels,
   ListCustomer,
   ListFunnels,
@@ -83,10 +84,18 @@ function App() {
             </PrivateRouteComp>
           }
         />
+
         <Route path="/tambah-order-request"
           element={
             <PrivateRouteComp >
               <AddNewOrderRequest />
+            </PrivateRouteComp>
+          }
+        />
+        <Route path="/ubah-order-request/:order_id"
+          element={
+            <PrivateRouteComp >
+              <EditOrderRequest />
             </PrivateRouteComp>
           }
         />

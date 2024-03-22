@@ -7,61 +7,55 @@ import { AuthContext } from '../../../../auth';
 import { Field, Formik } from 'formik';
 import Swal from 'sweetalert2';
 
-function ModalEditFunnelsProduct ( {
+function ModalEditFunnelsProduct({
     editFunnelsProduct,
     setEditFunnelsProduct,
     idSelected,
     fetchFunnelsDataDetail
-} )
-{
+}) {
 
-    const isMobile = useMediaQuery( { maxWidth: 767 } );
-    const { tokens } = useContext( AuthContext );
-    const [ funnelRetrieve, setFunnelRetrieve ] = useState( [] );
-    const [ showAlert, setShowAlert ] = useState( false ); // State for showing the alert
+    const isMobile = useMediaQuery({ maxWidth: 767 });
+    const { tokens } = useContext(AuthContext);
+    const [funnelRetrieve, setFunnelRetrieve] = useState([]);
+    const [showAlert, setShowAlert] = useState(false); // State for showing the alert
 
     // console.log( idSelected )
 
-    const fetchFunnelsRetreive = () =>
-    {
-        axios.get( `/api/v1/crm/funneldetails/${idSelected}`,
-            {
-                headers:
+    const fetchFunnelsRetreive = async () => {
+
+        try {
+            const response = await axios.get(`/api/v1/crm/funneldetails/${idSelected}`,
                 {
-                    withCredentials: true,
-                    Authorization: `Token ${tokens?.token}`,
-                },
+                    headers:
+                    {
+                        withCredentials: true,
+                        Authorization: `Token ${tokens?.token}`,
+                    },
 
-            } )
-            .then( res =>
-            {
-                setFunnelRetrieve( res.data )
-                // console.log( res.data )
+                })
+            setFunnelRetrieve(response.data)
+            // console.log( res.data )
 
-            } ).catch( err =>
-            {
-                console.log( err )
-            } )
+        } catch (err) {
+            console.log(err)
+        }
     }
-    useEffect( () =>
-    {
-        if ( idSelected !== undefined ) {
+    useEffect(() => {
+        if (idSelected !== undefined) {
             fetchFunnelsRetreive()
         }
 
-    }, [ idSelected ] )
+    }, [idSelected])
 
-    const handleClose = () =>
-    {
-        setEditFunnelsProduct( false );
+    const handleClose = () => {
+        setEditFunnelsProduct(false);
         fetchFunnelsRetreive();
-        setShowAlert( false );
+        setShowAlert(false);
     }
 
 
-    const handleCloseAlert = () =>
-    {
-        setShowAlert( false ); // Hide the alert
+    const handleCloseAlert = () => {
+        setShowAlert(false); // Hide the alert
     };
 
 
@@ -71,7 +65,7 @@ function ModalEditFunnelsProduct ( {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width:
-            ( isMobile ?
+            (isMobile ?
                 '100%'
                 :
                 500
@@ -85,25 +79,23 @@ function ModalEditFunnelsProduct ( {
 
 
     // Adjust the handleChangePrice function to set the numeric value in state
-    function handleChangePrice ( e, setFieldValue )
-    {
+    function handleChangePrice(e, setFieldValue) {
         const inputValue = e.target.value;
-        const numericValue = parseFloat( inputValue.replace( /[^\d]/g, '' ) ) || 0;
+        const numericValue = parseFloat(inputValue.replace(/[^\d]/g, '')) || 0;
         // Store the numeric value in form state
-        setFieldValue( 'price', numericValue );
+        setFieldValue('price', numericValue);
     }
 
     // Assuming defaultValue is declared outside the component
     const defaultValue = {
         product: funnelRetrieve?.product || '',
         qty: funnelRetrieve?.qty || '',
-        price: parseFloat( funnelRetrieve?.price ) || 0, // Parse to float
+        price: parseFloat(funnelRetrieve?.price) || 0, // Parse to float
         description: funnelRetrieve?.description || '',
     };
 
 
-    const handleEditProduct = async ( values ) =>
-    {
+    const handleEditProduct = async (values) => {
 
         const finalData = {
             ...values,
@@ -112,7 +104,7 @@ function ModalEditFunnelsProduct ( {
         // console.log( finalData )
         try {
 
-            const response = await axios.patch( `/api/v1/crm/funneldetails/${idSelected}/`, finalData,
+            const response = await axios.patch(`/api/v1/crm/funneldetails/${idSelected}/`, finalData,
                 {
                     headers: {
                         'Access-Control-Allow-Origin': '*',
@@ -124,21 +116,21 @@ function ModalEditFunnelsProduct ( {
 
             // console.log( response );
             handleClose();
-            Swal.fire( {
+            Swal.fire({
                 icon: 'success',
                 title: 'Funnels detail berhasil di ubah',
                 showConfirmButton: false,
                 timer: 2000
-            } )
+            })
             fetchFunnelsDataDetail();
-        } catch ( err ) {
-            console.log( err )
+        } catch (err) {
+            console.log(err)
             handleClose();
-            Swal.fire( {
+            Swal.fire({
                 icon: 'error',
                 title: 'Warning!',
                 text: 'Something is wrong',
-            } )
+            })
         }
 
     };
@@ -148,52 +140,52 @@ function ModalEditFunnelsProduct ( {
 
     return (
         <Modal
-            open={ editFunnelsProduct }
-            onClose={ handleClose }
+            open={editFunnelsProduct}
+            onClose={handleClose}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
-            <Box sx={ style }>
-                <Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 } }>
-                    <Typography id="modal-modal-title" variant="h6" component="h2" style={ { fontFamily: 'Poppins-Medium' } }>
+            <Box sx={style}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2" style={{ fontFamily: 'Poppins-Medium' }}>
                         Edit Funnels Produk
                     </Typography>
-                    <IconButton onClick={ handleClose }>
+                    <IconButton onClick={handleClose}>
                         <IoCloseOutline />
                     </IconButton>
                 </Box>
                 <hr />
                 <>
-                    {/* Conditional rendering for the alert */ }
-                    { showAlert && (
-                        <Alert severity="warning" onClose={ handleCloseAlert }>Harap isi form yang dibutuhkan.</Alert>
-                    ) }
+                    {/* Conditional rendering for the alert */}
+                    {showAlert && (
+                        <Alert severity="warning" onClose={handleCloseAlert}>Harap isi form yang dibutuhkan.</Alert>
+                    )}
                     <Formik
-                        initialValues={ defaultValue }
-                        enableReinitialize={ true }
-                        onSubmit={ handleEditProduct }
+                        initialValues={defaultValue}
+                        enableReinitialize={true}
+                        onSubmit={handleEditProduct}
                     >
-                        { ( {
+                        {({
                             handleSubmit,
                             handleChange,
                             values,
                             setFieldValue
-                        } ) => (
-                            <form onSubmit={ handleSubmit }>
+                        }) => (
+                            <form onSubmit={handleSubmit}>
                                 <Grid container>
-                                    <Grid item xs={ 12 } marginY={ 2 }>
+                                    <Grid item xs={12} marginY={2}>
                                         <TextField
                                             id="productName"
                                             fullWidth
                                             required
                                             label="Nama Produk"
                                             variant="outlined"
-                                            value={ values.product }
-                                            onChange={ handleChange( "product" ) }
-                                            sx={ styleForm }
+                                            value={values.product}
+                                            onChange={handleChange("product")}
+                                            sx={styleForm}
                                         />
                                     </Grid>
-                                    <Grid item xs={ 12 } marginBottom={ 2 }>
+                                    <Grid item xs={12} marginBottom={2}>
                                         <TextField
                                             id="qty"
                                             fullWidth
@@ -201,57 +193,57 @@ function ModalEditFunnelsProduct ( {
                                             type='number'
                                             label="Qty"
                                             variant="outlined"
-                                            value={ values.qty }
-                                            onChange={ handleChange( "qty" ) }
-                                            sx={ styleForm }
+                                            value={values.qty}
+                                            onChange={handleChange("qty")}
+                                            sx={styleForm}
                                         />
                                     </Grid>
-                                    <Grid item xs={ 12 } marginBottom={ 2 }>
+                                    <Grid item xs={12} marginBottom={2}>
                                         <Field name="price">
-                                            { ( { field } ) => (
+                                            {({ field }) => (
                                                 <TextField
-                                                    { ...field }
+                                                    {...field}
                                                     id="price"
                                                     fullWidth
                                                     required
                                                     type='text'
                                                     label="Harga"
                                                     variant="outlined"
-                                                    value={ `Rp ${values.price.toLocaleString()}` } // Display formatted value
-                                                    onChange={ ( e ) => handleChangePrice( e, setFieldValue ) }
-                                                    sx={ styleForm }
+                                                    value={`Rp ${values.price.toLocaleString()}`} // Display formatted value
+                                                    onChange={(e) => handleChangePrice(e, setFieldValue)}
+                                                    sx={styleForm}
                                                 />
-                                            ) }
+                                            )}
                                         </Field>
                                     </Grid>
-                                    <Grid item xs={ 12 } marginBottom={ 2 }>
+                                    <Grid item xs={12} marginBottom={2}>
                                         <TextField
                                             id="desc"
                                             label="Deskripsi"
                                             fullWidth
                                             multiline
-                                            rows={ 3 }
-                                            value={ values.description }
-                                            onChange={ handleChange( "description" ) }
-                                            InputProps={ {
+                                            rows={3}
+                                            value={values.description}
+                                            onChange={handleChange("description")}
+                                            InputProps={{
                                                 sx: {
                                                     fontFamily: 'Poppins-Light', // Change the font-family
                                                     minWidth: '100%'
                                                 }
-                                            } }
-                                            sx={ styleForm }
+                                            }}
+                                            sx={styleForm}
                                         />
                                     </Grid>
                                 </Grid>
 
 
                                 <hr />
-                                <Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <Button variant='contained' type='submit'>Simpan</Button>
-                                    <Button variant='outlined' onClick={ handleClose }>Batal</Button>
+                                    <Button variant='outlined' onClick={handleClose}>Batal</Button>
                                 </Box>
                             </form>
-                        ) }
+                        )}
                     </Formik>
                 </>
             </Box>

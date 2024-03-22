@@ -26,43 +26,39 @@ function ListFunnels() {
         toogleOpenModalApproval()
     }
 
+    const fetchListFunnels = async () => {
 
-    const fetchListFunnels = () => {
-        axios.get(`/api/v1/crm/funnels/`,
-            {
-                headers:
+        try {
+            const response = await axios.get(`/api/v1/crm/funnels/`,
                 {
-                    withCredentials: true,
-                    Authorization: `Token ${tokens?.token}`,
-                },
+                    headers:
+                    {
+                        withCredentials: true,
+                        Authorization: `Token ${tokens?.token}`,
+                    },
 
-            })
-            .then(res => {
-                setListFunnels(res.data)
+                })
+            setListFunnels(response.data)
+        } catch (err) {
+            if (err.response?.status === 401) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Sesi telah habis',
+                    text: 'Sesi anda telah berakhir. Silahkan login kembali.',
+                    confirmButtonText: 'Log In',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigate('/');
+                    }
+                });
 
-            }).catch(err => {
-                if (err.response?.status === 401) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Sesi telah habis',
-                        text: 'Sesi anda telah berakhir. Silahkan login kembali.',
-                        confirmButtonText: 'Log In',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            navigate('/');
-                        }
-                    });
-
-                } else (console.log(err))
-            })
+            } else (console.log(err))
+        }
     }
 
     useEffect(() => {
-
         if (userInfo?.id != null) fetchListFunnels()
-
     }, [userInfo?.id]);
-
 
     const getColumns = () => [
         {
@@ -195,9 +191,7 @@ function ListFunnels() {
 
     ];
 
-
     const columns = getColumns();
-
 
     const table = useMantineReactTable({
         columns,
@@ -237,7 +231,13 @@ function ListFunnels() {
                     </Box>
                 </Box>
             </div>
-            <ModalApproval fetchListFunnels={fetchListFunnels} open={visibilityModalApproval} id={selectedId} setVisibilityModalApproval={setVisibilityModalApproval} toogleOpenModalApproval={toogleOpenModalApproval} />
+            <ModalApproval
+                fetchListFunnels={fetchListFunnels}
+                open={visibilityModalApproval}
+                id={selectedId}
+                setVisibilityModalApproval={setVisibilityModalApproval}
+                toogleOpenModalApproval={toogleOpenModalApproval}
+            />
         </>
     )
 }

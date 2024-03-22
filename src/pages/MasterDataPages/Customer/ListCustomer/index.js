@@ -8,62 +8,53 @@ import Swal from 'sweetalert2';
 import axios from '../../../../API/axios';
 import { NavbarComponent } from '../../../../component';
 
-function ListCustomer ()
-{
-    const { tokens } = useContext( AuthContext );
-    const [ listCustomer, setListCustomer ] = useState( [] );
+function ListCustomer() {
+    const { tokens } = useContext(AuthContext);
+    const [listCustomer, setListCustomer] = useState([]);
     const navigate = useNavigate();
 
-    const handleAddCustomer = () =>
-    {
-        navigate( '/add-customer' )
+    const handleAddCustomer = () => {
+        navigate('/add-customer')
     }
-    const editCustomer = ( row ) =>
-    {
-        navigate( "/edit-customer/" + row.id )
+    const editCustomer = (row) => {
+        navigate("/edit-customer/" + row.id)
     }
 
-    const fetchListCustomer = () =>
-    {
-        axios.get( `/api/v1/core/customers/`,
-            {
-                headers:
+    const fetchListCustomer = async () => {
+        try {
+            const response = await axios.get(`/api/v1/core/customers/`,
                 {
-                    withCredentials: true,
-                    Authorization: `Token ${tokens?.token}`,
-                },
-
-            } )
-            .then( res =>
-            {
-
-                setListCustomer( res.data )
-                // console.log( res.data )
-            } ).catch( err =>
-            {
-                if ( err.response?.status === 401 ) {
-                    Swal.fire( {
-                        icon: 'error',
-                        title: 'Sesi telah habis',
-                        text: 'Sesi anda telah berakhir. Silahkan login kembali.',
-                        confirmButtonText: 'Log In',
-                    } ).then( ( result ) =>
+                    headers:
                     {
-                        if ( result.isConfirmed ) {
-                            navigate( '/' );
-                        }
-                    } );
+                        withCredentials: true,
+                        Authorization: `Token ${tokens?.token}`,
+                    },
 
-                } else ( console.log( err ) )
-            } )
+                })
+            setListCustomer(response.data)
+            // console.log( res.data )
+        } catch (err) {
+            if (err.response?.status === 401) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Sesi telah habis',
+                    text: 'Sesi anda telah berakhir. Silahkan login kembali.',
+                    confirmButtonText: 'Log In',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigate('/');
+                    }
+                });
+
+            } else (console.log(err))
+        }
     }
 
-    useEffect( () =>
-    {
+    useEffect(() => {
 
-        if ( tokens?.token != null ) fetchListCustomer()
+        if (tokens?.token != null) fetchListCustomer()
 
-    }, [ tokens?.token ] );
+    }, [tokens?.token]);
 
 
     const getColumns = () => [
@@ -129,8 +120,8 @@ function ListCustomer ()
         },
         {
             header: 'Edit',
-            accessorFn: ( row ) => (
-                <IconButton aria-label="delete" color="secondary" onClick={ () => { editCustomer( row ) } }>
+            accessorFn: (row) => (
+                <IconButton aria-label="delete" color="secondary" onClick={() => { editCustomer(row) }}>
                     <MdEdit />
                 </IconButton>
             ),
@@ -149,7 +140,7 @@ function ListCustomer ()
     const columns = getColumns();
 
 
-    const table = useMantineReactTable( {
+    const table = useMantineReactTable({
         columns,
         enableDensityToggle: false,
         initialState: { density: 'xs' },
@@ -186,28 +177,28 @@ function ListCustomer ()
         //         </Button>
         //     </Flex>
         // ),
-    } );
+    });
 
 
     return (
         <>
             <NavbarComponent />
-            <div style={ { display: 'flex', justifyContent: 'center', alignItems: 'center' } }>
-                <Grid container marginTop={ 3 } style={ { maxWidth: '95%', display: 'flex', justifyContent: 'center', alignItems: 'center' } }>
-                    <Grid item lg={ 6 } xs={ 6 } style={ { display: 'flex', alignItems: 'center' } }>
-                        <h2 style={ { fontFamily: 'Poppins-Regular' } }>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Grid container marginTop={3} style={{ maxWidth: '95%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <Grid item lg={6} xs={6} style={{ display: 'flex', alignItems: 'center' }}>
+                        <h2 style={{ fontFamily: 'Poppins-Regular' }}>
                             Customer
                         </h2>
                     </Grid>
-                    <Grid item lg={ 6 } xs={ 6 }>
-                        <div style={ { display: 'flex', alignItems: 'end', justifyContent: 'end' } }>
+                    <Grid item lg={6} xs={6}>
+                        <div style={{ display: 'flex', alignItems: 'end', justifyContent: 'end' }}>
                             <Button
                                 variant='contained'
                                 id='tabelButton'
-                                onClick={ handleAddCustomer }
-                                sx={ {
+                                onClick={handleAddCustomer}
+                                sx={{
                                     minHeight: '50px',
-                                } }
+                                }}
                             >
                                 Tambah baru
                             </Button>
@@ -217,10 +208,10 @@ function ListCustomer ()
 
             </div>
             <div>
-                <Box sx={ { overflow: "auto" } } marginY={ 5 } marginX={ 3 }>
-                    <Box sx={ { width: "100%", display: "table", tableLayout: "fixed" } }>
+                <Box sx={{ overflow: "auto" }} marginY={5} marginX={3}>
+                    <Box sx={{ width: "100%", display: "table", tableLayout: "fixed" }}>
                         <MantineReactTable
-                            table={ table }
+                            table={table}
                         />
                     </Box>
                 </Box>

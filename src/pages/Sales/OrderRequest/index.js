@@ -8,69 +8,61 @@ import { useNavigate } from 'react-router-dom';
 import axios from '../../../API/axios';
 import Swal from 'sweetalert2';
 
-function OrderRequest ()
-{
+function OrderRequest() {
 
-    const { tokens, userInfo } = useContext( AuthContext );
-    const [ listOrderRequest, setListOrderRequest ] = useState( [] );
+    const { tokens, userInfo } = useContext(AuthContext);
+    const [listOrderRequest, setListOrderRequest] = useState([]);
     const navigate = useNavigate();
-    const handleAddNewOrderRequest = () =>
-    {
-        navigate( '/tambah-order-request' );
+    const handleAddNewOrderRequest = () => {
+        navigate('/tambah-order-request');
+    }
+    const editOrderRequest = (row) => {
+        navigate("/ubah-order-request/" + row.id)
     }
 
-
-    const fetchListOrderRequest = () =>
-    {
-        axios.get( `/api/v1/crm/orderrequest/`,
-            {
-                headers:
+    const fetchListOrderRequest = async () => {
+        try {
+            const response = await axios.get(`/api/v1/crm/orderrequest/`,
                 {
-                    withCredentials: true,
-                    Authorization: `Token ${tokens?.token}`,
-                },
-
-            } )
-            .then( res =>
-            {
-                const filteredData = res.data.filter( item => item.sales === userInfo?.id );
-                setListOrderRequest( filteredData );
-                // console.log( res.data )
-
-            } ).catch( err =>
-            {
-                if ( err.response?.status === 401 ) {
-                    Swal.fire( {
-                        icon: 'error',
-                        title: 'Sesi telah habis',
-                        text: 'Sesi anda telah berakhir. Silahkan login kembali.',
-                        confirmButtonText: 'Log In',
-                    } ).then( ( result ) =>
+                    headers:
                     {
-                        if ( result.isConfirmed ) {
-                            navigate( '/' );
-                        }
-                    } );
+                        withCredentials: true,
+                        Authorization: `Token ${tokens?.token}`,
+                    },
 
-                } else ( console.log( err ) )
-            } )
+                })
+
+            const filteredData = response.data.filter(item => item.sales === userInfo?.id);
+            setListOrderRequest(filteredData);
+        } catch (err) {
+            if (err.response?.status === 401) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Sesi telah habis',
+                    text: 'Sesi anda telah berakhir. Silahkan login kembali.',
+                    confirmButtonText: 'Log In',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigate('/');
+                    }
+                });
+
+            } else (console.log(err))
+        }
     }
 
-    useEffect( () =>
-    {
-
-        if ( userInfo?.id != null ) fetchListOrderRequest()
-
-    }, [ userInfo?.id ] );
+    useEffect(() => {
+        if (userInfo?.id != null) fetchListOrderRequest()
+    }, [userInfo?.id]);
 
 
 
     const getColumns = () => [
         {
-            accessorFn: ( row ) => new Date( row.created_at ),
+            accessorFn: (row) => new Date(row.created_at),
             header: 'Tanggal',
             filterVariant: 'date-range',
-            Cell: ( { cell } ) => cell.getValue().toLocaleDateString(),
+            Cell: ({ cell }) => cell.getValue().toLocaleDateString(),
             mantineTableHeadCellProps: {
                 align: 'center',
             },
@@ -80,7 +72,7 @@ function OrderRequest ()
         },
         {
             header: 'Request No.',
-            accessorKey: 'funnel_no',
+            accessorKey: 'request_no',
             mantineTableHeadCellProps: {
                 align: 'center',
             },
@@ -98,20 +90,20 @@ function OrderRequest ()
                 align: 'center',
             },
         },
-        // {
-        //     header: 'Edit',
-        //     accessorFn: ( row ) => (
-        //         <IconButton aria-label="delete" color="secondary" onClick={ () => { editFunnels( row ) } }>
-        //             <MdEdit />
-        //         </IconButton>
-        //     ),
-        //     mantineTableHeadCellProps: {
-        //         align: 'center',
-        //     },
-        //     mantineTableBodyCellProps: {
-        //         align: 'center',
-        //     },
-        // },
+        {
+            header: 'Edit',
+            accessorFn: (row) => (
+                <IconButton aria-label="delete" color="secondary" onClick={() => { editOrderRequest(row) }}>
+                    <MdEdit />
+                </IconButton>
+            ),
+            mantineTableHeadCellProps: {
+                align: 'center',
+            },
+            mantineTableBodyCellProps: {
+                align: 'center',
+            },
+        },
 
     ];
 
@@ -119,7 +111,7 @@ function OrderRequest ()
     const columns = getColumns();
 
 
-    const table = useMantineReactTable( {
+    const table = useMantineReactTable({
         columns,
         enableDensityToggle: false,
         initialState: { density: 'xs' },
@@ -156,28 +148,28 @@ function OrderRequest ()
         //         </Button>
         //     </Flex>
         // ),
-    } );
+    });
 
 
     return (
         <>
             <NavbarComponent />
-            <div style={ { display: 'flex', justifyContent: 'center', alignItems: 'center' } }>
-                <Grid container marginTop={ 3 } style={ { maxWidth: '95%', display: 'flex', justifyContent: 'center', alignItems: 'center' } }>
-                    <Grid item lg={ 6 } xs={ 6 } style={ { display: 'flex', alignItems: 'center' } }>
-                        <h2 style={ { fontFamily: 'Poppins-Regular' } }>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Grid container marginTop={3} style={{ maxWidth: '95%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <Grid item lg={6} xs={6} style={{ display: 'flex', alignItems: 'center' }}>
+                        <h2 style={{ fontFamily: 'Poppins-Regular' }}>
                             Request Order
                         </h2>
                     </Grid>
-                    <Grid item lg={ 6 } xs={ 6 }>
-                        <div style={ { display: 'flex', alignItems: 'end', justifyContent: 'end' } }>
+                    <Grid item lg={6} xs={6}>
+                        <div style={{ display: 'flex', alignItems: 'end', justifyContent: 'end' }}>
                             <Button
                                 variant='contained'
                                 id='tabelButton'
-                                onClick={ handleAddNewOrderRequest }
-                                sx={ {
+                                onClick={handleAddNewOrderRequest}
+                                sx={{
                                     minHeight: '50px',
-                                } }
+                                }}
                             >
                                 Buat baru
                             </Button>
@@ -187,10 +179,10 @@ function OrderRequest ()
 
             </div>
             <div>
-                <Box sx={ { overflow: "auto" } } marginY={ 5 } marginX={ 3 }>
-                    <Box sx={ { width: "100%", display: "table", tableLayout: "fixed" } }>
+                <Box sx={{ overflow: "auto" }} marginY={5} marginX={3}>
+                    <Box sx={{ width: "100%", display: "table", tableLayout: "fixed" }}>
                         <MantineReactTable
-                            table={ table }
+                            table={table}
                         />
                     </Box>
                 </Box>

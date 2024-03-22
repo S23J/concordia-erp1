@@ -44,24 +44,24 @@ function EditFunnels() {
         setStatus(event.target.value);
     };
 
-    const fetchFunnelsData = () => {
-        axios.get(`/api/v1/crm/funnels/${transid}/`,
-            {
-                headers:
+    const fetchFunnelsData = async () => {
+        try {
+            const response = await axios.get(`/api/v1/crm/funnels/${transid}/`,
                 {
-                    withCredentials: true,
-                    Authorization: `Token ${tokens?.token}`,
-                },
+                    headers:
+                    {
+                        withCredentials: true,
+                        Authorization: `Token ${tokens?.token}`,
+                    },
 
-            })
-            .then(res => {
-                setFunnelsData(res.data)
-                setStatus(res.data.status)
-                // console.log( res.data )
+                })
+            setFunnelsData(response.data)
+            setStatus(response.data.status)
+            // console.log( res.data )
 
-            }).catch(err => {
-                console.log(err)
-            })
+        } catch (err) {
+            console.log(err)
+        }
     }
     useEffect(() => {
         if (transid !== undefined) {
@@ -72,25 +72,22 @@ function EditFunnels() {
 
     }, [transid, tokens?.token])
 
-    const fetchFunnelsDataDetail = () => {
-        axios.get(`/api/v1/crm/funneldetails/`, {
-            headers: {
-                withCredentials: true,
-                Authorization: `Token ${tokens?.token}`,
-            },
-        })
-            .then(res => {
-                // Filter the data based on funnelData.id
-                const filteredData = res.data.filter(item => item.funnel === funnelsData.id);
-                setFunnelsDataDetail(filteredData);
-
-                // console.log( filteredData )
+    const fetchFunnelsDataDetail = async () => {
+        try {
+            const response = await axios.get(`/api/v1/crm/funneldetails/`, {
+                headers: {
+                    withCredentials: true,
+                    Authorization: `Token ${tokens?.token}`,
+                },
             })
-            .catch(err => {
+            // Filter the data based on funnelData.id
+            const filteredData = response.data.filter(item => item.funnel === funnelsData.id);
+            setFunnelsDataDetail(filteredData);
 
-                console.log(err);
-
-            });
+            // console.log( filteredData )
+        } catch (err) {
+            console.log(err);
+        };
     }
 
     useEffect(() => {

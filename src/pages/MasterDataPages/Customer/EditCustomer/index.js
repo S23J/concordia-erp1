@@ -71,23 +71,21 @@ function EditCustomer() {
 
 
 
-    const fetchFunnelsDataDetail = () => {
-        axios.get(`/api/v1/core/customers/${custid}`, {
-            headers: {
-                withCredentials: true,
-                Authorization: `Token ${tokens?.token}`,
-            },
-        })
-            .then(res => {
-
-                setCustomerDetail(res.data);
-                setCustomerCategory(res.data.category);
-                setRatingValue(res.data.credit_score);
-                // console.log( res.data )
+    const fetchFunnelsDataDetail = async () => {
+        try {
+            const response = await axios.get(`/api/v1/core/customers/${custid}`, {
+                headers: {
+                    withCredentials: true,
+                    Authorization: `Token ${tokens?.token}`,
+                },
             })
-            .catch(err => {
-                console.log(err);
-            });
+            setCustomerDetail(response.data);
+            setCustomerCategory(response.data.category);
+            setRatingValue(response.data.credit_score);
+            // console.log( res.data )
+        } catch (err) {
+            console.log(err);
+        };
     }
 
     useEffect(() => {
@@ -99,26 +97,22 @@ function EditCustomer() {
     }, [custid, tokens?.token]);
 
 
-    const fetchListCategory = () => {
-        axios.get(`/api/v1/core/custcategories/`,
-            {
-                headers:
+    const fetchListCategory = async () => {
+        try {
+            const response = await axios.get(`/api/v1/core/custcategories/`,
                 {
-                    withCredentials: true,
-                    Authorization: `Token ${tokens?.token}`,
-                },
+                    headers:
+                    {
+                        withCredentials: true,
+                        Authorization: `Token ${tokens?.token}`,
+                    },
 
-            })
-            .then(res => {
-
-                setListCategory(res.data);
-                // console.log( res.data )
-
-            }).catch(err => {
-
-
-                (console.log(err))
-            })
+                })
+            setListCategory(response.data);
+            // console.log( res.data )
+        } catch (err) {
+            (console.log(err))
+        }
     }
 
     useEffect(() => {
@@ -128,27 +122,22 @@ function EditCustomer() {
     }, [tokens?.token]);
 
 
-    const fetchListCustomerAddress = () => {
-        axios.get(`/api/v1/core/custaddresses/`,
-            {
-                headers:
+    const fetchListCustomerAddress = async () => {
+        try {
+            const response = await axios.get(`/api/v1/core/custaddresses/`,
                 {
-                    withCredentials: true,
-                    Authorization: `Token ${tokens?.token}`,
-                },
+                    headers:
+                    {
+                        withCredentials: true,
+                        Authorization: `Token ${tokens?.token}`,
+                    },
 
-            })
-            .then(res => {
-
-                const filteredData = res.data.filter(item => item.customer === customerDetail.id);
-                setCustomerAddress(filteredData);
-
-
-            }).catch(err => {
-
-
-                (console.log(err))
-            })
+                })
+            const filteredData = response.data.filter(item => item.customer === customerDetail.id);
+            setCustomerAddress(filteredData);
+        } catch (err) {
+            (console.log(err))
+        }
     }
 
     useEffect(() => {

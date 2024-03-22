@@ -21,37 +21,36 @@ function Funnels() {
         navigate("/edit-funnels/" + row.id)
     }
 
-
-    const fetchListFunnels = () => {
-        axios.get(`/api/v1/crm/funnels/`,
-            {
-                headers:
+    const fetchListFunnels = async () => {
+        try {
+            const response = await axios.get(`/api/v1/crm/funnels/`,
                 {
-                    withCredentials: true,
-                    Authorization: `Token ${tokens?.token}`,
-                },
+                    headers:
+                    {
+                        withCredentials: true,
+                        Authorization: `Token ${tokens?.token}`,
+                    },
 
-            })
-            .then(res => {
-                const filteredData = res.data.filter(item => item.sales === userInfo?.id);
-                setListFunnels(filteredData);
-                // console.log( res.data )
+                })
 
-            }).catch(err => {
-                if (err.response?.status === 401) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Sesi telah habis',
-                        text: 'Sesi anda telah berakhir. Silahkan login kembali.',
-                        confirmButtonText: 'Log In',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            navigate('/');
-                        }
-                    });
+            const filteredData = response.data.filter(item => item.sales === userInfo?.id);
+            setListFunnels(filteredData);
+            // console.log( res.data )
+        } catch (err) {
+            if (err.response?.status === 401) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Sesi telah habis',
+                    text: 'Sesi anda telah berakhir. Silahkan login kembali.',
+                    confirmButtonText: 'Log In',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigate('/');
+                    }
+                });
 
-                } else (console.log(err))
-            })
+            } else (console.log(err))
+        }
     }
 
     useEffect(() => {
