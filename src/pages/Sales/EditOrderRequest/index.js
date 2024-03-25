@@ -138,7 +138,7 @@ function EditOrderRequest() {
 
                 })
 
-            const filteredData = response.data.filter(item => item.sales === userInfo?.id);
+            const filteredData = response.data.filter( item => item.sales === userInfo?.id && item.status === 100 );
             setListFunnels(filteredData);
 
         }
