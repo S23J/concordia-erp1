@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { numberFormat } from '../../../../utils';
 import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
 import { LinearProgressWithLabel } from '../../../LinearProgressWithLabel';
+import { Formik } from 'formik';
 
 function ModalApproval({
     open,
@@ -38,32 +39,8 @@ function ModalApproval({
 
     };
 
-    const [total, setTotal] = useState(0);
-    const [ppn, setPpn] = useState(11); // Default PPN percentage
-    const [ppnAmount, setPpnAmount] = useState(0);
-    const [grandTotal, setGrandTotal] = useState(0);
+
     const navigate = useNavigate();
-
-
-    useEffect(() => {
-        let calculatedTotal = 0;
-        dataFunnelDetail.forEach(item => {
-            calculatedTotal += parseFloat(item.subtotal);
-        });
-        setTotal(calculatedTotal);
-    }, [dataFunnelDetail]);
-
-    useEffect(() => {
-        const calculatedPpnAmount = (total * ppn) / 100;
-        setPpnAmount(calculatedPpnAmount);
-    }, [total, ppn]);
-
-    useEffect(() => {
-        const calculatedGrandTotal = total + ppnAmount;
-        setGrandTotal(calculatedGrandTotal);
-    }, [total, ppnAmount]);
-
-
 
 
     const getColumns = () => [
@@ -160,6 +137,7 @@ function ModalApproval({
             })
             const filteredData = response.data.filter(item => item.funnel === id);
             setDataFunnelDetail(filteredData);
+            // console.log( filteredData )
         }
         catch (err) {
             if (err.response?.status === 401) {
@@ -208,8 +186,6 @@ function ModalApproval({
         }
     }
 
-
-
     const statusSwitchCase = (status) => {
         switch (status) {
             case 0:
@@ -243,7 +219,7 @@ function ModalApproval({
             setStatus(response.data.status)
             fetchFunnelsDataDetail(response.data.id)
             fetchDataSalesFunnel(response.data.sales)
-
+            // console.log( response.data )
         } catch (err) {
             console.log(err)
             Swal.fire({
@@ -253,6 +229,22 @@ function ModalApproval({
             })
         }
     }
+
+
+
+    const defaultValue = {
+        customer: dataFunnel?.customer || '',
+        contact_person: dataFunnel?.contact_person || '',
+        email: dataFunnel?.email || '',
+        phone: dataFunnel?.phone || '',
+        position: dataFunnel?.position || '',
+        remarks: dataFunnel?.remarks || '',
+        total: parseFloat( dataFunnel?.total ) || '',
+        ppn: parseFloat( dataFunnel?.ppn ) || '',
+        grand_total: parseFloat( dataFunnel?.grand_total ) || '',
+
+    };
+
 
     const submitApproval = async (title, value) => {
         toogleOpenModalApproval()
@@ -301,9 +293,6 @@ function ModalApproval({
             }
         }
 
-
-
-
     }
 
     useEffect(() => {
@@ -337,172 +326,185 @@ function ModalApproval({
                             </Grid>
 
                         </Grid>
+
                         <Grid container spacing={3} marginTop={3}> {/* Add spacing between grid containers */}
-                            <Grid item md={4} xs={12}>
-                                <Grid container spacing={3} marginBottom={3}> {/* Add spacing between grid items and set marginBottom */}
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            id="customer"
-                                            fullWidth
-                                            InputProps={{
-                                                readOnly: true,
-                                            }}
-                                            readOnly
-                                            label="Pelanggan"
-                                            value={dataFunnel?.customer}
-                                            variant="outlined"
-                                            sx={styleForm}
-                                        />
-                                    </Grid>
-                                </Grid>
-                                <Grid container spacing={3} marginBottom={3}> {/* Add spacing between grid items and set marginBottom */}
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            id="contactPerson"
-                                            fullWidth
-                                            required
-                                            label="Kontak"
-                                            value={dataFunnel?.contact_person}
-                                            variant="outlined"
-                                            sx={styleForm}
-                                            InputProps={{
-                                                readOnly: true,
-                                            }}
-                                        />
-                                    </Grid>
-                                </Grid>
-                                <Grid container spacing={3} marginBottom={3}> {/* Add spacing between grid items and set marginBottom */}
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            id="phone"
-                                            type='number'
-                                            fullWidth
-                                            required
-                                            label="No. Telp"
-                                            value={dataFunnel?.phone}
-                                            variant="outlined"
-                                            sx={styleForm}
-                                            InputProps={{
-                                                readOnly: true,
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            id="email"
-                                            type='email'
-                                            required
-                                            fullWidth
-                                            label="Email"
-                                            value={dataFunnel?.email}
-                                            variant="outlined"
-                                            sx={styleForm}
-                                            InputProps={{
-                                                readOnly: true,
-                                            }}
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                            <Grid item md={4} xs={12}>
-                                <Grid container spacing={3} marginBottom={3}> {/* Add spacing between grid items and set marginBottom */}
-                                    <Grid item md={12} xs={12}>
-                                        <TextField
-                                            id="position"
-                                            fullWidth
-                                            required
-                                            label="Posisi"
-                                            value={dataFunnel?.position}
-                                            InputProps={{
-                                                readOnly: true,
-                                            }}
-                                            variant="outlined"
-                                            sx={styleForm}
-                                        />
-                                    </Grid>
-                                    <Grid item md={12} xs={12}>
-                                        <TextField
-                                            id="catatan"
-                                            label="Catatan"
-                                            value={dataFunnel?.remarks}
-                                            fullWidth
-                                            multiline
-                                            rows={8}
-                                            InputProps={{
-                                                readOnly: true,
-                                                sx: {
-                                                    fontFamily: 'Poppins-Light', // Change the font-family
-                                                    minWidth: '100%'
-                                                }
-                                            }}
-                                            sx={styleForm}
-                                        />
-                                    </Grid>
-                                </Grid>
 
-                            </Grid>
+                            <Formik
+                                initialValues={ defaultValue }
+                                enableReinitialize={ true }
+                            >
+                                { ( {
+                                    values,
+                                } ) => (
+                                    <>
+                                        <Grid item md={ 4 } xs={ 12 }>
+                                            <Grid container spacing={ 3 } marginBottom={ 3 }> {/* Add spacing between grid items and set marginBottom */ }
+                                                <Grid item xs={ 12 }>
+                                                    <TextField
+                                                        id="customer"
+                                                        fullWidth
+                                                        InputProps={ {
+                                                            readOnly: true,
+                                                        } }
+                                                        readOnly
+                                                        label="Pelanggan"
+                                                        value={ values.customer }
+                                                        variant="outlined"
+                                                        sx={ styleForm }
+                                                    />
+                                                </Grid>
+                                            </Grid>
+                                            <Grid container spacing={ 3 } marginBottom={ 3 }> {/* Add spacing between grid items and set marginBottom */ }
+                                                <Grid item xs={ 12 }>
+                                                    <TextField
+                                                        id="contactPerson"
+                                                        fullWidth
+                                                        required
+                                                        label="Kontak"
+                                                        value={ values.contact_person }
+                                                        variant="outlined"
+                                                        sx={ styleForm }
+                                                        InputProps={ {
+                                                            readOnly: true,
+                                                        } }
+                                                    />
+                                                </Grid>
+                                            </Grid>
+                                            <Grid container spacing={ 3 } marginBottom={ 3 }> {/* Add spacing between grid items and set marginBottom */ }
+                                                <Grid item xs={ 12 }>
+                                                    <TextField
+                                                        id="phone"
+                                                        type='number'
+                                                        fullWidth
+                                                        required
+                                                        label="No. Telp"
+                                                        value={ values.phone }
+                                                        variant="outlined"
+                                                        sx={ styleForm }
+                                                        InputProps={ {
+                                                            readOnly: true,
+                                                        } }
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={ 12 }>
+                                                    <TextField
+                                                        id="email"
+                                                        type='email'
+                                                        required
+                                                        fullWidth
+                                                        label="Email"
+                                                        value={ values.email }
+                                                        variant="outlined"
+                                                        sx={ styleForm }
+                                                        InputProps={ {
+                                                            readOnly: true,
+                                                        } }
+                                                    />
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+                                        <Grid item md={ 4 } xs={ 12 }>
+                                            <Grid container spacing={ 3 } marginBottom={ 3 }> {/* Add spacing between grid items and set marginBottom */ }
+                                                <Grid item md={ 12 } xs={ 12 }>
+                                                    <TextField
+                                                        id="position"
+                                                        fullWidth
+                                                        required
+                                                        label="Posisi"
+                                                        value={ values.position }
+                                                        InputProps={ {
+                                                            readOnly: true,
+                                                        } }
+                                                        variant="outlined"
+                                                        sx={ styleForm }
+                                                    />
+                                                </Grid>
+                                                <Grid item md={ 12 } xs={ 12 }>
+                                                    <TextField
+                                                        id="catatan"
+                                                        label="Catatan"
+                                                        value={ values.remarks }
+                                                        fullWidth
+                                                        multiline
+                                                        rows={ 8 }
+                                                        InputProps={ {
+                                                            readOnly: true,
+                                                            sx: {
+                                                                fontFamily: 'Poppins-Light', // Change the font-family
+                                                                minWidth: '100%'
+                                                            }
+                                                        } }
+                                                        sx={ styleForm }
+                                                    />
+                                                </Grid>
+                                            </Grid>
 
-                            <Grid item md={4} xs={12}>
-                                <Grid container spacing={3} marginBottom={3}> {/* Add spacing between grid items and set marginBottom */}
-                                    <Grid item md={12} xs={12}>
-                                        <TextField
-                                            id="total"
-                                            fullWidth
-                                            type='text'
-                                            InputProps={{
-                                                readOnly: true,
-                                            }}
-                                            label="Total"
-                                            variant="outlined"
-                                            value={numberFormat(total)}
-                                            sx={styleForm}
-                                        />
-                                    </Grid>
-                                </Grid>
-                                <Grid container spacing={3} marginBottom={3}> {/* Add spacing between grid items and set marginBottom */}
-                                    <Grid item md={12} xs={12}>
-                                        <TextField
-                                            id="ppnAmount"
-                                            fullWidth
-                                            type='text'
-                                            InputProps={{
-                                                readOnly: true,
-                                            }}
-                                            label="Jumlah PPN"
-                                            variant="outlined"
-                                            value={numberFormat(ppnAmount)}
-                                            sx={styleForm}
-                                        />
-                                    </Grid>
-                                </Grid>
-                                <Grid container spacing={3} marginBottom={3}> {/* Add spacing between grid items and set marginBottom */}
-                                    <Grid item md={12} xs={12}>
-                                        <TextField
-                                            id="grandTotal"
-                                            fullWidth
-                                            type='text'
-                                            InputProps={{
-                                                readOnly: true,
-                                            }}
-                                            label="Grand Total"
-                                            variant="outlined"
-                                            value={numberFormat(grandTotal)}
-                                            sx={styleForm}
-                                        />
-                                    </Grid>
+                                        </Grid>
 
-                                </Grid>
-                                <Grid container spacing={3} marginBottom={3}> {/* Add spacing between grid items and set marginBottom */}
-                                    <Grid item md={12} xs={12}>
-                                        <Typography sx={{
-                                            fontFamily: 'Poppins-Regular',
-                                        }} variant='h6'>Status : {statusSwitchCase(dataFunnel?.status)}</Typography>
-                                        <LinearProgressWithLabel value={dataFunnel?.status} />
-                                    </Grid>
+                                        <Grid item md={ 4 } xs={ 12 }>
+                                            <Grid container spacing={ 3 } marginBottom={ 3 }> {/* Add spacing between grid items and set marginBottom */ }
+                                                <Grid item md={ 12 } xs={ 12 }>
+                                                    <TextField
+                                                        id="total"
+                                                        fullWidth
+                                                        type='text'
+                                                        InputProps={ {
+                                                            readOnly: true,
+                                                        } }
+                                                        label="Total"
+                                                        variant="outlined"
+                                                        value={ numberFormat( values.total ) }
+                                                        sx={ styleForm }
+                                                    />
+                                                </Grid>
+                                            </Grid>
+                                            <Grid container spacing={ 3 } marginBottom={ 3 }> {/* Add spacing between grid items and set marginBottom */ }
+                                                <Grid item md={ 12 } xs={ 12 }>
+                                                    <TextField
+                                                        id="ppnAmount"
+                                                        fullWidth
+                                                        type='text'
+                                                        InputProps={ {
+                                                            readOnly: true,
+                                                        } }
+                                                        label="Jumlah PPN"
+                                                        variant="outlined"
+                                                        value={ numberFormat( values.ppn ) }
+                                                        sx={ styleForm }
+                                                    />
+                                                </Grid>
+                                            </Grid>
+                                            <Grid container spacing={ 3 } marginBottom={ 3 }> {/* Add spacing between grid items and set marginBottom */ }
+                                                <Grid item md={ 12 } xs={ 12 }>
+                                                    <TextField
+                                                        id="grandTotal"
+                                                        fullWidth
+                                                        type='text'
+                                                        InputProps={ {
+                                                            readOnly: true,
+                                                        } }
+                                                        label="Grand Total"
+                                                        variant="outlined"
+                                                        value={ numberFormat( values.grand_total ) }
+                                                        sx={ styleForm }
+                                                    />
+                                                </Grid>
 
-                                </Grid>
-                            </Grid>
+                                            </Grid>
+                                            <Grid container spacing={ 3 } marginBottom={ 3 }> {/* Add spacing between grid items and set marginBottom */ }
+                                                <Grid item md={ 12 } xs={ 12 }>
+                                                    <Typography sx={ {
+                                                        fontFamily: 'Poppins-Regular',
+                                                    } } variant='h6'>Status : { statusSwitchCase( dataFunnel?.status ) }</Typography>
+                                                    <LinearProgressWithLabel value={ dataFunnel?.status } />
+                                                </Grid>
 
+                                            </Grid>
+                                        </Grid>
+                                    </>
+
+                                ) }
+                            </Formik>
                         </Grid>
                         <Grid container spacing={3} marginTop={3}>
                             <Grid item xs={12}>
