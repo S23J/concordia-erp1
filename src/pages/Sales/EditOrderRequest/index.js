@@ -312,7 +312,7 @@ function EditOrderRequest() {
                                             {isNewCustomer === 'new' ?
                                                 (<>
                                                     <FormControl fullWidth style={{ gap: 5, marginTop: -18, marginBottom: 10 }} sx={styleForm}>
-                                                        <FormLabel id="radio-buttons-customer">Form Customer : </FormLabel>
+                                                        <FormLabel id="radio-buttons-customer">Form Pelanggan : </FormLabel>
                                                         <Button
                                                             component="label"
                                                             role={undefined}
@@ -330,7 +330,7 @@ function EditOrderRequest() {
                                                         <Typography style={{ fontFamily: 'Poppins-Regular' }} variant='caption'>file : {Form_Pic[0]?.name}</Typography>
                                                     </FormControl>
                                                     <FormControl fullWidth style={{ gap: 5 }} sx={styleForm}>
-                                                        <FormLabel id="radio-buttons-customer">NPWP Customer : </FormLabel>
+                                                        <FormLabel id="radio-buttons-customer">NPWP Pelanggan : </FormLabel>
                                                         <Button
                                                             component="label"
                                                             role={undefined}
@@ -352,7 +352,7 @@ function EditOrderRequest() {
                                                 </>)
                                                 : (
                                                     <FormControl fullWidth sx={styleForm}>
-                                                        <InputLabel id="demo-simple-select-label">Customer</InputLabel>
+                                                        <InputLabel id="demo-simple-select-label">Pelanggan</InputLabel>
                                                         <Select
                                                             labelId="demo-simple-select-label"
                                                             id="demo-simple-select"

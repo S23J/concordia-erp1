@@ -238,20 +238,30 @@ function AddNewOrderRequest() {
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                                <Grid item md={4} xs={12}>
+                                <Grid item md={ 5 } xs={ 12 }>
                                     <Grid container spacing={2} marginBottom={2}> {/* Add spacing between grid items and set marginBottom */}
                                         <Grid item md={12} xs={12}>
                                             <FormControl fullWidth sx={styleForm}>
-                                                <FormLabel id="radio-buttons-customer">Customer</FormLabel>
+                                                <FormLabel id="radio-buttons-customer">Pelanggan</FormLabel>
                                                 <RadioGroup
                                                     row
-                                                    defaultValue={isNewCustomer}
-                                                    onChange={handleChangeCustomer}
+                                                    defaultValue={ isNewCustomer }
+                                                    onChange={ handleChangeCustomer }
                                                     aria-labelledby="radio-buttons-customer"
                                                     name="row-radio-buttons-group"
                                                 >
-                                                    <FormControlLabel value='new' control={<Radio />} label="Customer Baru" />
-                                                    <FormControlLabel value='exist' control={<Radio />} label="Bukan Customer Baru" />
+                                                    <FormControlLabel
+                                                        value='new'
+                                                        control={ <Radio /> }
+                                                        label="Pelanggan Baru"
+                                                        style={ { fontFamily: 'Poppins-Medium' } } // Add style prop here
+                                                    />
+                                                    <FormControlLabel
+                                                        value='exist'
+                                                        control={ <Radio /> }
+                                                        label="Bukan Pelanggan Baru"
+                                                        style={ { fontFamily: 'Poppins-Medium' } } // Add style prop here
+                                                    />
                                                 </RadioGroup>
                                             </FormControl>
                                         </Grid>
@@ -260,7 +270,7 @@ function AddNewOrderRequest() {
                                             {isNewCustomer === 'new' ?
                                                 (<>
                                                     <FormControl fullWidth style={{ gap: 5, marginBottom: 10 }} sx={styleForm}>
-                                                        <FormLabel id="radio-buttons-customer">Form Customer : </FormLabel>
+                                                        <FormLabel id="radio-buttons-customer">Form Pelanggan : </FormLabel>
                                                         <Button
                                                             component="label"
                                                             role={undefined}
@@ -275,7 +285,7 @@ function AddNewOrderRequest() {
                                                         <Typography style={{ fontFamily: 'Poppins-Regular' }} variant='caption'>file : {Form_Pic[0]?.name}</Typography>
                                                     </FormControl>
                                                     <FormControl fullWidth style={{ gap: 5 }} sx={styleForm}>
-                                                        <FormLabel id="radio-buttons-customer">NPWP Customer : </FormLabel>
+                                                        <FormLabel id="radio-buttons-customer">NPWP Pelanggan : </FormLabel>
                                                         <Button
                                                             component="label"
                                                             role={undefined}
@@ -292,7 +302,7 @@ function AddNewOrderRequest() {
                                                 </>)
                                                 : (
                                                     <FormControl fullWidth style={{ marginTop: 10 }} sx={styleForm}>
-                                                        <InputLabel id="demo-simple-select-label">Customer</InputLabel>
+                                                        <InputLabel id="demo-simple-select-label">Pelanggan</InputLabel>
                                                         <Select
                                                             labelId="demo-simple-select-label"
                                                             id="demo-simple-select"
@@ -318,12 +328,10 @@ function AddNewOrderRequest() {
                                                     </FormControl>
                                                 )
                                             }
-
-
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                                <Grid item md={4} xs={12} style={{ marginBottom: 20 }}>
+                                <Grid item md={ 3 } xs={ 12 } style={ { marginBottom: 20 } }>
                                     <Grid item md={12} xs={12} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                         <Stack spacing={2} direction="row">
                                             <Button

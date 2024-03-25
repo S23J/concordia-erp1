@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { NavbarComponent } from '../../../component'
 import { Box, Button, Grid, IconButton } from '@mui/material'
 import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 
 function OrderRequest() {
 
-    const { tokens, userInfo } = useContext(AuthContext);
+    const { tokens } = useContext( AuthContext );
     const [listOrderRequest, setListOrderRequest] = useState([]);
     const navigate = useNavigate();
     const handleAddNewOrderRequest = () => {
@@ -20,40 +20,58 @@ function OrderRequest() {
         navigate("/ubah-order-request/" + row.id)
     }
 
-    const fetchListOrderRequest = async () => {
+
+    const fetchData = useCallback( async () =>
+    {
         try {
-            const response = await axios.get(`/api/v1/crm/orderrequest/`,
-                {
-                    headers:
-                    {
-                        withCredentials: true,
-                        Authorization: `Token ${tokens?.token}`,
-                    },
+            const fetchListCustomer = await axios.get( `/api/v1/core/customers/`, {
+                headers: {
+                    withCredentials: true,
+                    Authorization: `Token ${tokens?.token}`,
+                },
+            } );
+            const customers = fetchListCustomer.data;
 
-                })
+            const fetchListOrderRequest = await axios.get( `/api/v1/crm/orderrequest/`, {
+                headers: {
+                    withCredentials: true,
+                    Authorization: `Token ${tokens?.token}`,
+                },
+            } );
+            const orderRequests = fetchListOrderRequest.data;
 
-            const filteredData = response.data.filter(item => item.sales === userInfo?.id);
-            setListOrderRequest(filteredData);
-        } catch (err) {
-            if (err.response?.status === 401) {
-                Swal.fire({
+            // Map over order requests and replace customer id with customer name
+            const updatedOrderRequests = orderRequests.map( order =>
+            {
+                const customerInfo = customers.find( customer => customer.id === order.customer );
+                const customerName = customerInfo ? customerInfo.name : '';
+                return { ...order, customer: customerName };
+            } );
+
+            setListOrderRequest( updatedOrderRequests );
+        } catch ( err ) {
+            if ( err.response?.status === 401 ) {
+                Swal.fire( {
                     icon: 'error',
                     title: 'Sesi telah habis',
                     text: 'Sesi anda telah berakhir. Silahkan login kembali.',
                     confirmButtonText: 'Log In',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        navigate('/');
+                } ).then( ( result ) =>
+                {
+                    if ( result.isConfirmed ) {
+                        navigate( '/' );
                     }
-                });
+                } );
 
-            } else (console.log(err))
+            } else ( console.log( err ) )
         }
-    }
+    }, [ tokens?.token ] );
 
-    useEffect(() => {
-        if (userInfo?.id != null) fetchListOrderRequest()
-    }, [userInfo?.id]);
+    useEffect( () =>
+    {
+        if ( tokens?.token != null ) fetchData();
+
+    }, [ tokens?.token, fetchData ] );
 
 
 
