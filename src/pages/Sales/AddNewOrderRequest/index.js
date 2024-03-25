@@ -168,7 +168,7 @@ function AddNewOrderRequest() {
             Swal.fire({
                 icon: 'error',
                 title: 'Warning!',
-                text: 'Gagal menambahkan customer',
+                text: 'Gagal menambahkan order request',
             })
         }
     }
@@ -303,12 +303,12 @@ function AddNewOrderRequest() {
                                                 </>)
                                                 : (
                                                     <FormControl fullWidth style={{ marginTop: 10 }} sx={styleForm}>
-                                                        <InputLabel id="demo-simple-select-label">Pelanggan</InputLabel>
+                                                        <InputLabel id="demo-simple-select-label">Pilih Pelanggan</InputLabel>
                                                         <Select
                                                             labelId="demo-simple-select-label"
                                                             id="demo-simple-select"
                                                             value={selectedCust}
-                                                            label="Funnel Nomor"
+                                                            label="Pilih Pelanggan"
                                                             required
                                                             onChange={(event) => {
                                                                 setSelectedCust(event.target.value)
